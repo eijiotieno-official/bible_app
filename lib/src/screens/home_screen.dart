@@ -1,7 +1,4 @@
-import 'package:bible_app/src/providers/book_provider.dart';
-import 'package:bible_app/src/providers/chapters_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
-import 'package:bible_app/src/providers/version_provider.dart';
 import 'package:bible_app/src/services/fetch_data.dart';
 import 'package:bible_app/src/widgets/bible_view.dart';
 import 'package:flutter/material.dart';

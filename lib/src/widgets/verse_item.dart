@@ -39,10 +39,15 @@ class VerseItem extends ConsumerWidget {
               style: DefaultTextStyle.of(context).style,
               children: <TextSpan>[
                 TextSpan(
-                  text: "${verse.verse.toString()} ",
+                  text: verse.verse == 1
+                      ? "${verse.chapter.toString()} "
+                      : "${verse.verse.toString()} ",
                   style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelSmall?.fontSize!,
+                    fontSize: verse.verse == 1
+                        ? Theme.of(context).textTheme.headlineLarge?.fontSize!
+                        : Theme.of(context).textTheme.labelSmall?.fontSize!,
                     color: Theme.of(context).colorScheme.primary,
+                    fontWeight: verse.verse == 1 ? FontWeight.bold : null,
                   ),
                 ),
                 // TextSpan for the verse text

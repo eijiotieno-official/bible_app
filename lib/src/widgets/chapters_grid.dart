@@ -5,50 +5,51 @@ import 'package:flutter/material.dart';
 
 class ChaptersGrid extends StatelessWidget {
   final Book book;
+  final String? initBook;
   final List<Verse> verses;
-  final Chapter? activeChapter;
-  final Function(int) scrollToIndex;
+  final int? activeChapter;
+  final Function(int) onChapterTapped;
   const ChaptersGrid({
     super.key,
     required this.verses,
     required this.activeChapter,
-    required this.scrollToIndex,
+    required this.onChapterTapped,
     required this.book,
+    required this.initBook,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.4,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: GridView.builder(
-          itemCount: book.chapters.length,
-          physics: const BouncingScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 8,
-            mainAxisSpacing: 8.0,
-            crossAxisSpacing: 8.0,
-          ),
-          itemBuilder: (context, index) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        children: List.generate(
+          book.chapters.length,
+          (index) {
             Chapter chapter = book.chapters[index];
             return GestureDetector(
               onTap: () {
                 int idx = verses.indexWhere((element) =>
                     element.chapter == chapter.title &&
-                    element.book == book.title);
-                scrollToIndex(idx);
+                    element.book == book.title &&
+                    element.verse == 1);
+                onChapterTapped(idx);
                 Navigator.pop(context);
               },
-              child: Card(
-                margin: const EdgeInsets.all(0),
-                color: activeChapter?.title == chapter.title
-                    ? Theme.of(context).colorScheme.primaryContainer
-                    : null,
-                child: Center(
-                  child: Text(
-                    chapter.title.toString(),
-                  ),
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0)),
+                  margin: EdgeInsets.zero,
+                  color: activeChapter == chapter.title &&
+                          initBook == book.title
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : null,
+                  child: Center(child: Text(chapter.title.toString())),
                 ),
               ),
             );
