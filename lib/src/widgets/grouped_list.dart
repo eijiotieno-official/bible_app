@@ -4,7 +4,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 class GroupedList extends StatelessWidget {
   final List<dynamic> items;
   final Widget Function(BuildContext, int) itemBuilder;
-  final Widget header;
+  final Widget? header;
   final ItemScrollController itemScrollController;
   final ScrollOffsetController scrollOffsetController;
   final ItemPositionsListener itemPositionsListener;

@@ -1,14 +1,15 @@
+import 'package:bible_app/src/databases/bible_database.dart';
 import 'package:bible_app/src/models/book_model.dart';
-import 'package:bible_app/src/models/chapter_model.dart';
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:bible_app/src/providers/book_provider.dart';
-import 'package:bible_app/src/providers/chapters_provider.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
+import 'package:bible_app/src/utils/font_size_util.dart';
 import 'package:bible_app/src/widgets/chapters_grid.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 class TocView extends ConsumerStatefulWidget {
   final String? book;
@@ -30,11 +31,9 @@ class _TocViewState extends ConsumerState<TocView> {
 
   List<Verse> _verses = [];
 
-  List<Chapter> _chapters = [];
-
   List<Book> _books = [];
 
-  // final AutoScrollController _scrollController = AutoScrollController();
+  final AutoScrollController _scrollController = AutoScrollController();
 
   void _jumpToBook() {
     Future.delayed(
@@ -42,13 +41,10 @@ class _TocViewState extends ConsumerState<TocView> {
       () {
         final versesState = ref.watch(versesProvider);
 
-        final chaptersState = ref.watch(chaptersProvider);
-
         final booksState = ref.watch(booksProvider);
 
         setState(() {
           _verses = versesState.asData?.value ?? [];
-          _chapters = chaptersState.asData?.value ?? [];
           _books = booksState.asData?.value ?? [];
           _isLoading = false;
         });
@@ -57,7 +53,7 @@ class _TocViewState extends ConsumerState<TocView> {
           final bookIndex =
               _books.indexWhere((test) => test.title == widget.book);
 
-          // _scrollController.scrollToIndex(bookIndex);
+          _scrollController.scrollToIndex(bookIndex);
         }
       },
     );
@@ -68,7 +64,6 @@ class _TocViewState extends ConsumerState<TocView> {
     _activeBook = widget.book;
     _initBook = widget.book;
     _activeChapter = widget.chapter;
-    _activeVerse = widget.verse;
     _jumpToBook();
     super.initState();
   }
@@ -76,7 +71,26 @@ class _TocViewState extends ConsumerState<TocView> {
   String? _initBook;
   String? _activeBook;
   int? _activeChapter;
-  int? _activeVerse;
+
+  final TextEditingController _searchController = TextEditingController();
+
+  void _search() {
+    if (_searchController.text.trim().isNotEmpty) {
+      final firstMatch = _books.firstWhereOrNull((test) => test.title
+          .trim()
+          .replaceAll(" ", "")
+          .toLowerCase()
+          .contains(
+              _searchController.text.trim().replaceAll(" ", "").toLowerCase()));
+
+      if (firstMatch != null) {
+        final bookIndex =
+            _books.indexWhere((test) => test.title == firstMatch.title);
+
+        _scrollController.scrollToIndex(bookIndex);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +116,12 @@ class _TocViewState extends ConsumerState<TocView> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(book.title),
+                  Text(
+                    book.title,
+                    style: TextStyle(
+                      fontSize: FontSizeUtil.font4(context),
+                    ),
+                  ),
                   Icon(_activeBook == book.title
                       ? Icons.arrow_drop_up_rounded
                       : Icons.arrow_drop_down_rounded),
@@ -116,7 +135,9 @@ class _TocViewState extends ConsumerState<TocView> {
                   setState(() {
                     _activeChapter = index;
                   });
-                  // scrollTo(verse: _verses[index], ref: ref);
+                  ref
+                      .read(itemScrollControllerProvider)
+                      .jumpTo(index: index, alignment: 0.075);
                 },
                 book: book,
                 initBook: _initBook,
@@ -129,28 +150,82 @@ class _TocViewState extends ConsumerState<TocView> {
 
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.75,
-      child: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                strokeCap: StrokeCap.round,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              autofocus: false,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                labelText: "Search",
               ),
-            )
-          : ListView.builder(
-              // controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
-              itemCount: _books.length,
-              itemBuilder: (context, index) {
-                final book = _books[index];
-                // return AutoScrollTag(
-                //   key: ValueKey(index),
-                //   controller: _scrollController,
-                //   index: index,
-                //   highlightColor:
-                //       Theme.of(context).colorScheme.primary.withOpacity(0.25),
-                //   child: buildBook(book),
-                // );
-              },
+              onChanged: (v) => _search(),
             ),
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      strokeCap: StrokeCap.round,
+                    ),
+                  )
+                : ListView.builder(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: _books.length,
+                    itemBuilder: (context, index) {
+                      final book = _books[index];
+                      return AutoScrollTag(
+                        key: ValueKey(index),
+                        controller: _scrollController,
+                        index: index,
+                        highlightColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.25),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (index == 0)
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  "Old Testament",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: FontSizeUtil.font4(context) + 4,
+                                  ),
+                                ),
+                              ),
+                            if (index == 39)
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  "New Testament",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: FontSizeUtil.font4(context) + 4,
+                                  ),
+                                ),
+                              ),
+                            buildBook(book),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+        ],
+      ),
     );
   }
 }

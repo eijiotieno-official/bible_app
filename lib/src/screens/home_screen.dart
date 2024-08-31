@@ -31,8 +31,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ? Brightness.light
                 : Brightness.dark,
       ),
-      child: Material(
-        child: versesState.when(
+      child: Scaffold(
+        body: versesState.when(
           data: (data) => Scaffold(
             appBar: AppBar(),
             body: const BibleView(),

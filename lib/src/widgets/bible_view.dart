@@ -1,8 +1,9 @@
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
-import 'package:bible_app/src/services/scroll_cache_service.dart';
+import 'package:bible_app/src/services/bible_list_cache_service.dart';
 import 'package:bible_app/src/services/show_toc.dart';
+import 'package:bible_app/src/utils/font_size_util.dart';
 import 'package:bible_app/src/widgets/grouped_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,21 +25,29 @@ class _BibleViewState extends ConsumerState<BibleView> {
   late ItemPositionsListener itemPositionsListener;
   late ScrollOffsetListener scrollOffsetListener;
 
-  // Future<void> _lastPixel() async {
-  //   final pixels = await ScrollCacheService.read();
-  //   if (pixels != null) {
-  //     _scrollController.animateTo(
-  //       pixels,
-  //       duration: const Duration(seconds: 3),
-  //       curve: Curves.easeIn,
-  //     );
-  //   }
-  // }
+  Future<void> _lastPixel() async {
+    await Future.delayed(
+      const Duration(milliseconds: 100),
+      () async {
+        final index = await BibleListCacheService.read() ?? 0;
+
+        final versesState = ref.read(versesProvider);
+        final verses = versesState.asData?.value ?? [];
+
+        itemScrollController.jumpTo(index: index, alignment: 0.05);
+
+        setState(() {
+          _activeVerse = verses[index];
+        });
+      },
+    );
+  }
 
   @override
   void initState() {
     itemScrollController = ref.read(itemScrollControllerProvider);
     scrollOffsetController = ref.read(scrollOffsetControllerProvider);
+    scrollOffsetListener = ref.read(scrollOffsetListenerProvider);
     itemPositionsListener = ref.read(itemPositionsListenerProvider)
       ..itemPositions.addListener(
         () {
@@ -52,29 +61,29 @@ class _BibleViewState extends ConsumerState<BibleView> {
                       : min)
               .index;
 
-          final last = positions
-              .where((ItemPosition position) => position.itemLeadingEdge < 1)
-              .reduce((ItemPosition max, ItemPosition position) =>
-                  position.itemLeadingEdge > max.itemLeadingEdge
-                      ? position
-                      : max)
-              .index;
+          BibleListCacheService.save(first);
 
-          debugPrint("FIRST: $first LAST: $last");
-        },
-      );
-    scrollOffsetListener = ref.read(scrollOffsetListenerProvider)
-      ..changes.listen(
-        (pixels) {
-          ScrollCacheService.save(pixels);
+          final versesState = ref.read(versesProvider);
+          final verses = versesState.asData?.value ?? [];
+
+          final firstVerseInViewPort = verses[first + 2];
+
+          final previousActiveVerse = _activeVerse ?? verses.first;
+
+          if (firstVerseInViewPort.book != previousActiveVerse.book ||
+              firstVerseInViewPort.chapter != previousActiveVerse.chapter) {
+            setState(() {
+              _activeVerse = firstVerseInViewPort;
+            });
+          }
         },
       );
 
     super.initState();
-    // _lastPixel();
+    _lastPixel();
   }
 
-  Verse? _topVerse;
+  Verse? _activeVerse;
 
   @override
   Widget build(BuildContext context) {
@@ -91,105 +100,48 @@ class _BibleViewState extends ConsumerState<BibleView> {
       itemBuilder: (context, index) {
         return VerseItem(verse: verses[index]);
       },
-      header: SizedBox(
-        height: 75,
-        child: Center(
-          child: GestureDetector(
-            onTap: () {
-              showTOC(
-                context: context,
-                book: _topVerse?.book,
-                chapter: _topVerse?.chapter,
-                verse: _topVerse?.verse,
-              );
-            },
-            child: Card(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
-                ),
-                child: Text(
-                  "${_topVerse?.book} ${_topVerse?.chapter}",
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize!,
-                    fontWeight: FontWeight.w500,
+      header: _activeVerse == null
+          ? null
+          : SizedBox(
+              height: 75,
+              child: Center(
+                child: GestureDetector(
+                  onTap: () {
+                    showTOC(
+                      context: context,
+                      book: _activeVerse?.book,
+                      chapter: _activeVerse?.chapter,
+                      verse: _activeVerse?.verse,
+                    );
+                  },
+                  child: Card(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 4.0,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "${_activeVerse?.book} ${_activeVerse?.chapter}",
+                            style: TextStyle(
+                              fontSize: FontSizeUtil.font3(context),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 4.0),
+                            child: Icon(Icons.arrow_drop_down_rounded),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
     );
-
-    // GroupedListView(
-    //   shrinkWrap: true,
-    //   physics: const BouncingScrollPhysics(),
-    //   controller: _scrollController,
-    //   elements: verses.sorted((a, b) {
-    //     final bookIndexA = BibleDatabase.bibleBooks.indexOf(a.book);
-    //     final bookIndexB = BibleDatabase.bibleBooks.indexOf(b.book);
-    //     if (bookIndexA != bookIndexB) {
-    //       return bookIndexA.compareTo(bookIndexB);
-    //     } else {
-    //       if (a.chapter != b.chapter) {
-    //         return a.chapter.compareTo(b.chapter);
-    //       } else {
-    //         return a.verse.compareTo(b.verse);
-    //       }
-    //     }
-    //   }),
-    //   itemComparator: (a, b) => a.verse.compareTo(b.verse),
-    //   floatingHeader: true,
-    //   useStickyGroupSeparators: true,
-    //   groupBy: (verse) {
-    //     final chapter =
-    //         verse.chapter < 10 ? "0${verse.chapter}" : "${verse.chapter}";
-    //     return "${BibleDatabase.bibleBooks.indexOf(verse.book)} - $chapter";
-    //   },
-    //   groupComparator: (value1, value2) => value1.compareTo(value2),
-    // groupHeaderBuilder: (verse) => SizedBox(
-    //   height: 75,
-    //   child: Center(
-    //     child: GestureDetector(
-    //       onTap: () {
-    //         showTOC(
-    //             context: context,
-    //             book: verse.book,
-    //             chapter: verse.chapter,
-    //             verse: verse.verse);
-    //       },
-    //       child: Card(
-    //         color: Theme.of(context).colorScheme.primaryContainer,
-    //         child: Padding(
-    //           padding: const EdgeInsets.symmetric(
-    //             horizontal: 8.0,
-    //             vertical: 4.0,
-    //           ),
-    //           child: Text(
-    //             "${verse.book} ${verse.chapter}",
-    //             style: TextStyle(
-    //               fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize!,
-    //               fontWeight: FontWeight.w500,
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // ),
-    //   indexedItemBuilder: (context, verse, index) {
-    //     return AutoScrollTag(
-    //       key: ValueKey(index),
-    //       controller: _scrollController,
-    //       index: index,
-    //       highlightColor:
-    //           Theme.of(context).colorScheme.primary.withOpacity(0.25),
-    //       child: VerseItem(verse: verse),
-    //     );
-    //   },
-    // );
   }
 }
