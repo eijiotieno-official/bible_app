@@ -10,8 +10,10 @@ class VerseItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selected = ref.watch(selectedVersesProvider);
+
     bool isSelected =
-        ref.watch(selectedVersesProvider.notifier).isSelected(verse);
+        selected.any((test) => test.toString() == verse.toString());
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -41,35 +43,44 @@ class VerseItem extends ConsumerWidget {
                 ),
               ],
             ),
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                  text: verse.verse == 1
-                      ? "${verse.chapter.toString()}  "
-                      : "${verse.verse.toString()}  ",
-                  style: TextStyle(
-                    fontSize: verse.verse == 1
-                        ? FontSizeUtil.font1(context)
-                        : FontSizeUtil.font5(context),
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: verse.verse == 1 ? FontWeight.bold : null,
+          GestureDetector(
+            onTap: () {
+              if (isSelected) {
+                ref.read(selectedVersesProvider.notifier).remove(verse);
+              } else {
+                ref.read(selectedVersesProvider.notifier).add(verse);
+              }
+            },
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                children: <TextSpan>[
+                  TextSpan(
+                    text: verse.verse == 1
+                        ? "${verse.chapter.toString()}  "
+                        : "${verse.verse.toString()}  ",
+                    style: TextStyle(
+                      fontSize: verse.verse == 1
+                          ? FontSizeUtil.font1(context)
+                          : FontSizeUtil.font5(context),
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: verse.verse == 1 ? FontWeight.bold : null,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: verse.text.trim(),
-                  style: TextStyle(
-                    fontSize: FontSizeUtil.font4(context),
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.primary
-                        : null,
-                    decorationColor: Theme.of(context).colorScheme.primary,
-                    decorationStyle: TextDecorationStyle.wavy,
-                    decoration: isSelected ? TextDecoration.underline : null,
+                  TextSpan(
+                    text: verse.text.trim(),
+                    style: TextStyle(
+                      fontSize: FontSizeUtil.font4(context),
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : null,
+                      decorationColor: Theme.of(context).colorScheme.primary,
+                      decorationStyle: TextDecorationStyle.wavy,
+                      decoration: isSelected ? TextDecoration.underline : null,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

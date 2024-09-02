@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:bible_app/src/enums/bible_version_enum.dart';
+import 'package:bible_app/src/models/bible_version_model.dart';
 import 'package:bible_app/src/models/book_model.dart';
 import 'package:bible_app/src/models/chapter_model.dart';
 import 'package:bible_app/src/models/verse_model.dart';
@@ -9,8 +9,12 @@ import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 
 class BibleDatabase {
-  final BibleVersion version;
-  BibleDatabase({required this.version});
+  final BibleVersion? version;
+  BibleDatabase({this.version});
+
+  static List<BibleVersion> bibleVersions = [
+    BibleVersion(title: "King James", path: "assets/kjv.json"),
+  ];
 
   static List<String> bibleBooks = [
     'Genesis',
@@ -85,10 +89,8 @@ class BibleDatabase {
     try {
       List<Verse> verses = [];
 
-      String versionString = bibleVersionToString(version);
-
-      String jsonString =
-          await rootBundle.loadString('assets/$versionString.json');
+      String jsonString = await rootBundle
+          .loadString(version?.path ?? bibleVersions.first.path);
 
       final jsonList = json.decode(jsonString);
 

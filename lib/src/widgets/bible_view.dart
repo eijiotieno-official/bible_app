@@ -1,5 +1,6 @@
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
+import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
 import 'package:bible_app/src/services/bible_list_cache_service.dart';
 import 'package:bible_app/src/services/show_toc.dart';
@@ -91,6 +92,10 @@ class _BibleViewState extends ConsumerState<BibleView> {
 
     final verses = versesState.value ?? [];
 
+    final selected = ref.watch(selectedVersesProvider);
+
+    final isVerseSelected = selected.isNotEmpty;
+
     return GroupedList(
       items: verses,
       itemScrollController: itemScrollController,
@@ -102,17 +107,20 @@ class _BibleViewState extends ConsumerState<BibleView> {
       },
       header: _activeVerse == null
           ? null
-          : SizedBox(
-              height: 75,
-              child: Center(
+          : Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
                   onTap: () {
-                    showTOC(
-                      context: context,
-                      book: _activeVerse?.book,
-                      chapter: _activeVerse?.chapter,
-                      verse: _activeVerse?.verse,
-                    );
+                    if (!isVerseSelected) {
+                      showTOC(
+                        context: context,
+                        book: _activeVerse?.book,
+                        chapter: _activeVerse?.chapter,
+                        verse: _activeVerse?.verse,
+                      );
+                    }
                   },
                   child: Card(
                     color: Theme.of(context).colorScheme.primaryContainer,
@@ -121,21 +129,12 @@ class _BibleViewState extends ConsumerState<BibleView> {
                         horizontal: 12.0,
                         vertical: 4.0,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "${_activeVerse?.book} ${_activeVerse?.chapter}",
-                            style: TextStyle(
-                              fontSize: FontSizeUtil.font3(context),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 4.0),
-                            child: Icon(Icons.arrow_drop_down_rounded),
-                          ),
-                        ],
+                      child: Text(
+                        "${_activeVerse?.book} ${_activeVerse?.chapter}",
+                        style: TextStyle(
+                          fontSize: FontSizeUtil.font3(context),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

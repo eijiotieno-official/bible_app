@@ -15,11 +15,8 @@ class SelectedVersesNotifier extends StateNotifier<List<Verse>> {
     ];
   }
 
-  bool isSelected(Verse newVerse) =>
-      state.any((verse) => verse.toString() == newVerse.toString());
-
   void clear() {
-    state.clear();
+    state = [];
   }
 }
 
