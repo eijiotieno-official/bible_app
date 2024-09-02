@@ -5,7 +5,8 @@ import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/screens/bookmark_screen.dart';
+import 'package:bible_app/src/screens/search_screen.dart';
+import 'package:bible_app/src/services/bible_version_cache_service.dart';
 import 'package:bible_app/src/services/fetch_data.dart';
 import 'package:bible_app/src/utils/font_size_util.dart';
 import 'package:bible_app/src/widgets/bible_view.dart';
@@ -23,10 +24,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  Future<void> _init() async {
+    final BibleVersion? versionReadResult =
+        await BibleVersionCacheService.read();
+
+    final BibleVersion version =
+        versionReadResult ?? BibleDatabase.bibleVersions.first;
+        
+    await fetchData(ref: ref, version: version);
+  }
+
   @override
   void initState() {
     super.initState();
-    fetchData(ref);
+    _init();
   }
 
   Future<void> _copy(List<Verse> verses) async {
@@ -81,7 +92,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: isVerseSelected
               ? null
               : DropdownButton<BibleVersion>(
-                  underline: const SizedBox.shrink(),
+                  iconSize: FontSizeUtil.font1(context),
                   borderRadius: BorderRadius.circular(16.0),
                   value: ref.watch(versionProvider),
                   items: BibleDatabase.bibleVersions
@@ -91,7 +102,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Text(
                             e.title,
                             style: TextStyle(
-                                fontSize: FontSizeUtil.font3(context)),
+                              fontSize: FontSizeUtil.font3(context),
+                            ),
                           ),
                         ),
                       )
@@ -99,14 +111,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onChanged: (BibleVersion? value) {
                     final currentVersion = ref.watch(versesProvider);
 
-                    ref.read(versionProvider.notifier).state =
-                        value ?? BibleDatabase.bibleVersions.first;
-
-                    if (currentVersion.toString() != value.toString()) {
-                      fetchData(ref);
-                      ref
-                          .read(itemScrollControllerProvider)
-                          .jumpTo(index: 0, alignment: 0.05);
+                    if (value != null) {
+                      if (currentVersion.toString() != value.toString()) {
+                        ref.read(versionProvider.notifier).state = value;
+                        BibleVersionCacheService.save(value);
+                        fetchData(ref: ref, version: value);
+                        ref
+                            .read(itemScrollControllerProvider)
+                            .jumpTo(index: 0, alignment: 0.05);
+                      }
                     }
                   },
                 ),
@@ -122,13 +135,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             if (isVerseSelected)
               IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.notes_rounded,
-                ),
-              ),
-            if (isVerseSelected)
-              IconButton(
                 onPressed: () {
                   _share(selected);
                 },
@@ -138,25 +144,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             if (!isVerseSelected)
               IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.search_rounded,
-                ),
-              ),
-            if (!isVerseSelected)
-              IconButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return const BookmarkScreen();
+                        return const SearchScreen();
                       },
                     ),
                   );
                 },
                 icon: const Icon(
-                  Icons.bookmark_outline_rounded,
+                  Icons.search_rounded,
                 ),
               ),
           ],
