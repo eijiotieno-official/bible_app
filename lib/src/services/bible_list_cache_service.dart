@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class BibleListCacheService {
+class LastIndexCacheService {
   static Future<int?> read() async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();

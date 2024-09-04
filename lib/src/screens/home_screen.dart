@@ -1,19 +1,22 @@
-import 'package:bible_app/src/databases/bible_database.dart';
 import 'package:bible_app/src/models/bible_version_model.dart';
 import 'package:bible_app/src/models/verse_model.dart';
+import 'package:bible_app/src/providers/last_index_provider.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/screens/search_screen.dart';
-import 'package:bible_app/src/services/bible_version_cache_service.dart';
-import 'package:bible_app/src/services/fetch_data.dart';
-import 'package:bible_app/src/utils/font_size_util.dart';
+import 'package:bible_app/src/widgets/search_view.dart';
+import 'package:bible_app/src/services/bible_list_cache_service.dart';
+import 'package:bible_app/src/services/fetch_bible_version_data.dart';
+import 'package:bible_app/src/services/fetch_cached_data.dart';
+import 'package:bible_app/src/services/show_search.dart';
+import 'package:bible_app/src/services/show_versions.dart';
 import 'package:bible_app/src/widgets/bible_view.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -24,24 +27,65 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  Future<void> _init() async {
-    final BibleVersion? versionReadResult =
-        await BibleVersionCacheService.read();
+  Future<void> _initData() async {
+    await fetchCachedData(ref: ref);
 
-    final BibleVersion version =
-        versionReadResult ?? BibleDatabase.bibleVersions.first;
-        
-    await fetchData(ref: ref, version: version);
+    final BibleVersion version = ref.read(versionProvider);
+
+    await fetchBibleVersionData(ref: ref, version: version);
   }
+
+  Verse? _activeVerse;
 
   @override
   void initState() {
     super.initState();
-    _init();
+    _initData().then(
+      (_) {
+        ref
+            .read(ScrollControllerProvider.itemPositionsListenerProvider)
+            .itemPositions
+            .addListener(
+          () {
+            final positions = ref
+                .read(ScrollControllerProvider.itemPositionsListenerProvider)
+                .itemPositions
+                .value
+                .toList();
+
+            final first = positions
+                .where((ItemPosition position) => position.itemTrailingEdge > 0)
+                .reduce((ItemPosition min, ItemPosition position) =>
+                    position.itemTrailingEdge < min.itemTrailingEdge
+                        ? position
+                        : min)
+                .index;
+
+            final firstIndex = first;
+
+            LastIndexCacheService.save(firstIndex);
+
+            final versesState = ref.read(versesProvider);
+
+            final verses = versesState.asData?.value ?? [];
+
+            final firstVerseInViewPort = verses[firstIndex];
+
+            final previousActiveVerse = _activeVerse ?? verses.first;
+
+            if (firstVerseInViewPort.book != previousActiveVerse.book ||
+                firstVerseInViewPort.chapter != previousActiveVerse.chapter) {
+              ref.read(lastIndexProvider.notifier).state = firstIndex;
+              _activeVerse = firstVerseInViewPort;
+            }
+          },
+        );
+      },
+    );
   }
 
   Future<void> _copy(List<Verse> verses) async {
-    String cleaned = cleanVerses(verses);
+    String cleaned = _cleanVerses(verses);
 
     await FlutterClipboard.copy(cleaned).then(
       (_) {
@@ -51,7 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _share(List<Verse> verses) async {
-    String cleaned = cleanVerses(verses);
+    String cleaned = _cleanVerses(verses);
 
     await Share.share(cleaned).then(
       (_) {
@@ -60,7 +104,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  String cleanVerses(List<Verse> verses) {
+  String _cleanVerses(List<Verse> verses) {
     String result = verses
         .map((e) => " [${e.book} ${e.chapter}:${e.verse}] ${e.text.trim()}")
         .join();
@@ -75,9 +119,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final versesState = ref.watch(versesProvider);
 
+    final verses = versesState.asData?.value ?? [];
+
+    bool versesLoaded = verses.isNotEmpty;
+
     final selected = ref.watch(selectedVersesProvider);
 
     final isVerseSelected = selected.isNotEmpty;
+
+    final bibleVersion = ref.watch(versionProvider);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -89,42 +139,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       child: Scaffold(
         appBar: AppBar(
-          title: isVerseSelected
+          title: versesLoaded == false
               ? null
-              : DropdownButton<BibleVersion>(
-                  iconSize: FontSizeUtil.font1(context),
-                  borderRadius: BorderRadius.circular(16.0),
-                  value: ref.watch(versionProvider),
-                  items: BibleDatabase.bibleVersions
-                      .map(
-                        (e) => DropdownMenuItem<BibleVersion>(
-                          value: e,
-                          child: Text(
-                            e.title,
-                            style: TextStyle(
-                              fontSize: FontSizeUtil.font3(context),
-                            ),
-                          ),
+              : Card(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16.0),
+                    onTap: () {
+                      showVersions(context: context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 4.0,
+                      ),
+                      child: Text(
+                        bibleVersion.title,
+                        style: const TextStyle(
+                          fontSize: 16,
                         ),
-                      )
-                      .toList(),
-                  onChanged: (BibleVersion? value) {
-                    final currentVersion = ref.watch(versesProvider);
-
-                    if (value != null) {
-                      if (currentVersion.toString() != value.toString()) {
-                        ref.read(versionProvider.notifier).state = value;
-                        BibleVersionCacheService.save(value);
-                        fetchData(ref: ref, version: value);
-                        ref
-                            .read(itemScrollControllerProvider)
-                            .jumpTo(index: 0, alignment: 0.05);
-                      }
-                    }
-                  },
+                      ),
+                    ),
+                  ),
                 ),
           actions: [
-            if (isVerseSelected)
+            if (isVerseSelected && versesLoaded)
               IconButton(
                 onPressed: () {
                   _copy(selected);
@@ -133,7 +171,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Icons.copy_rounded,
                 ),
               ),
-            if (isVerseSelected)
+            if (isVerseSelected && versesLoaded)
               IconButton(
                 onPressed: () {
                   _share(selected);
@@ -142,26 +180,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Icons.share_rounded,
                 ),
               ),
-            if (!isVerseSelected)
+            if (!isVerseSelected && versesLoaded)
               IconButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const SearchScreen();
-                      },
-                    ),
-                  );
+                  showSearchScreen(context: context, verses: verses);
                 },
                 icon: const Icon(
                   Icons.search_rounded,
                 ),
               ),
+            if (!isVerseSelected && versesLoaded)
+              PopupMenuButton(
+                itemBuilder: (context) {
+                  return [];
+                },
+              ),
           ],
         ),
         body: versesState.when(
-          data: (data) => const BibleView(),
+          data: (data) => BibleView(data),
           error: (error, stackTrace) => Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
