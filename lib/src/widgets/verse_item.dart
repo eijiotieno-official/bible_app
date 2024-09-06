@@ -1,6 +1,7 @@
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/utils/font_size_util.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,7 +44,7 @@ class VerseItem extends ConsumerWidget {
                 ),
               ],
             ),
-          GestureDetector(
+          InkWell(
             onTap: () {
               if (isSelected) {
                 ref.read(selectedVersesProvider.notifier).remove(verse);
@@ -54,6 +55,7 @@ class VerseItem extends ConsumerWidget {
             child: RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
                 children: <TextSpan>[
                   TextSpan(
                     text: verse.verse == 1
@@ -68,6 +70,7 @@ class VerseItem extends ConsumerWidget {
                     ),
                   ),
                   TextSpan(
+                    recognizer: TapGestureRecognizer(),
                     text: verse.text.trim(),
                     style: TextStyle(
                       fontSize: FontSizeUtil.font4(context),

@@ -14,7 +14,7 @@ class ChaptersGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
+      padding: const EdgeInsets.only(top: 16.0),
       child: Wrap(
         spacing: 8.0,
         runSpacing: 8.0,
@@ -24,7 +24,7 @@ class ChaptersGrid extends StatelessWidget {
             final chapter = chapters[index];
             return GestureDetector(
               onTap: () {
-                onChapterTapped(index);
+                onChapterTapped(chapter);
               },
               child: SizedBox(
                 width: 40,

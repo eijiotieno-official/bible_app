@@ -10,9 +10,9 @@ class BibleDatabase {
   BibleDatabase({this.version});
 
   static List<BibleVersion> bibleVersions = [
-    BibleVersion(title: "King James Version", path: "assets/kjv.json"),
-    BibleVersion(title: "American Standard Version", path: "assets/asv.json"),
-    BibleVersion(title: "Bible in Basic English", path: "assets/bbe.json"),
+    BibleVersion(title: "King James", path: "assets/kjv.json"),
+    BibleVersion(title: "American Standard", path: "assets/asv.json"),
+    // BibleVersion(title: "Bible in Basic English", path: "assets/bbe.json"),
     BibleVersion(title: "Darby English Bible", path: "assets/dby.json"),
     BibleVersion(title: "Webster's Bible", path: "assets/wbt.json"),
     BibleVersion(title: "World English Bible", path: "assets/web.json"),
@@ -115,6 +115,8 @@ class BibleDatabase {
           }
         }
       });
+
+     
 
       return Right(verses);
     } catch (e) {

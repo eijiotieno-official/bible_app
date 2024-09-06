@@ -30,68 +30,68 @@ class PickerView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              "Books",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primaryContainer,
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                "Books",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              subtitle: DropdownButton<String>(
+                isExpanded: true,
+                underline: const SizedBox.shrink(),
+                borderRadius: BorderRadius.circular(16.0),
+                value: selectedBook,
+                items: books
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e,
+                        child: Text(e),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (String? value) {
+                  onBookTapped(value);
+                },
               ),
             ),
-            subtitle: DropdownButton<String>(
-              isExpanded: true,
-              underline: const SizedBox.shrink(),
-              borderRadius: BorderRadius.circular(16.0),
-              value: selectedBook,
-              items: books
-                  .map(
-                    (e) => DropdownMenuItem<String>(
-                      value: e,
-                      child: Text(e),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (String? value) {
-                onBookTapped(value);
-              },
-            ),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              "Chapters",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primaryContainer,
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                "Chapters",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              subtitle: ChaptersGrid(
+                chapters: chapters,
+                selectedChapter: selectedChapter,
+                onChapterTapped: onChapterTapped,
               ),
             ),
-            subtitle: ChaptersGrid(
-              chapters: chapters,
-              selectedChapter: selectedChapter,
-              onChapterTapped: onChapterTapped,
-            ),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              "Verses",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primaryContainer,
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                "Verses",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              subtitle: VersesGrid(
+                verses: verses,
+                selectedVerse: selectedVerse,
+                onVerseTapped: onVerseTapped,
               ),
             ),
-            subtitle: VersesGrid(
-              verses: verses,
-              selectedVerse: selectedVerse,
-              onVerseTapped: onVerseTapped,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

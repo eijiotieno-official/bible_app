@@ -9,11 +9,17 @@ class VerseNotifier extends StateNotifier<AsyncValue<List<Verse>>> {
   Future<void> loadVerses(BibleVersion version) async {
     state = const AsyncValue.loading();
 
-    final getVersesResult = await BibleDatabase(version: version).getVerses();
+    await Future.delayed(
+      const Duration(seconds: 3),
+      () async {
+        final getVersesResult =
+            await BibleDatabase(version: version).getVerses();
 
-    state = getVersesResult.fold(
-      (error) => AsyncValue.error(error, StackTrace.current),
-      (verses) => AsyncValue.data(verses),
+        state = getVersesResult.fold(
+          (error) => AsyncValue.error(error, StackTrace.current),
+          (verses) => AsyncValue.data(verses),
+        );
+      },
     );
   }
 }

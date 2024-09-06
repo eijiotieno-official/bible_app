@@ -12,9 +12,11 @@ class LastIndexCacheService {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
 
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-      () async => await sharedPreferences.setInt('index', index),
-    );
+    await sharedPreferences.setInt('index', index);
+
+    // await Future.delayed(
+    //   const Duration(milliseconds: 300),
+    //   () async => await sharedPreferences.setInt('index', index),
+    // );
   }
 }

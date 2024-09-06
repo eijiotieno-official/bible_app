@@ -23,7 +23,7 @@ class _BibleViewState extends ConsumerState<BibleView> {
       () async {
         final index = ref.read(lastIndexProvider);
 
-        ScrollControllerProvider.jumpTo(ref: ref, index: index);
+        ScrollControllerProvider.jumpTo(ref: ref, index: (index + 1));
       },
     );
   }

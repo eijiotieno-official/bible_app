@@ -8,17 +8,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'fetch_bible_version_data.dart';
 
-Future<void> showVersions({required BuildContext context}) async =>
-    await showModalBottomSheet(
-      useSafeArea: true,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      showDragHandle: true,
-      context: context,
-      builder: (context) {
-        return const _VersionsView();
-      },
-    );
+Future<void> showVersions({
+  required WidgetRef ref,
+  required BuildContext context,
+}) async {
+  final result = await showModalBottomSheet(
+    useSafeArea: true,
+    isScrollControlled: true,
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    showDragHandle: true,
+    context: context,
+    builder: (context) {
+      return const _VersionsView();
+    },
+  );
+
+  if (result != null) {
+    // ScrollControllerProvider.jumpTo(ref: ref, index: 0);
+
+    final version = ref.watch(versionProvider);
+
+    await fetchBibleVersionData(ref: ref, version: version);
+  }
+}
 
 class _VersionsView extends ConsumerStatefulWidget {
   const _VersionsView();
@@ -34,6 +46,16 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
   void initState() {
     _currentVersion = ref.read(versionProvider);
     super.initState();
+  }
+
+  void _confirm() {
+    final version = _currentVersion ?? BibleDatabase.bibleVersions.first;
+
+    BibleVersionCacheService.save(version);
+
+    ref.read(versionProvider.notifier).state = version;
+
+    Navigator.pop(context, true);
   }
 
   @override
@@ -69,18 +91,7 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
                 onPressed: ref.read(versionProvider).toString() !=
                         _currentVersion.toString()
                     ? () {
-                        final version = _currentVersion ??
-                            BibleDatabase.bibleVersions.first;
-
-                        BibleVersionCacheService.save(version);
-
-                        ref.read(versionProvider.notifier).state = version;
-
-                        fetchBibleVersionData(ref: ref, version: version);
-
-                        ScrollControllerProvider.jumpTo(ref: ref, index: 0);
-
-                        Navigator.pop(context);
+                        _confirm();
                       }
                     : null,
                 child: const Text("Confirm"),

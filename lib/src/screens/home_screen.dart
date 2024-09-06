@@ -5,11 +5,10 @@ import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/widgets/search_view.dart';
+import 'package:bible_app/src/screens/search_screen.dart';
 import 'package:bible_app/src/services/bible_list_cache_service.dart';
 import 'package:bible_app/src/services/fetch_bible_version_data.dart';
 import 'package:bible_app/src/services/fetch_cached_data.dart';
-import 'package:bible_app/src/services/show_search.dart';
 import 'package:bible_app/src/services/show_versions.dart';
 import 'package:bible_app/src/widgets/bible_view.dart';
 import 'package:clipboard/clipboard.dart';
@@ -142,10 +141,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: versesLoaded == false
               ? null
               : Card(
+                  margin: EdgeInsets.zero,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16.0),
-                    onTap: () {
-                      showVersions(context: context);
+                    onTap: () async {
+                      await showVersions(context: context, ref: ref);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -183,7 +183,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             if (!isVerseSelected && versesLoaded)
               IconButton(
                 onPressed: () {
-                  showSearchScreen(context: context, verses: verses);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return SearchScreen(verses);
+                      },
+                    ),
+                  );
                 },
                 icon: const Icon(
                   Icons.search_rounded,
@@ -191,8 +198,57 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             if (!isVerseSelected && versesLoaded)
               PopupMenuButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
                 itemBuilder: (context) {
-                  return [];
+                  return [
+                    PopupMenuItem(
+                      onTap: () {},
+                      child: const Text("Invite friends"),
+                    ),
+                    PopupMenuItem(
+                      onTap: () {},
+                      child: const Text("Contact Developer"),
+                    ),
+                    PopupMenuItem(
+                      onTap: () {},
+                      child: const Text("Privacy Policy"),
+                    ),
+                    // PopupMenuItem(
+                    //   padding: EdgeInsets.zero,
+                    //   onTap: () {},
+                    //   child: const ListTile(
+                    //     minVerticalPadding: 0.0,
+                    //     minTileHeight: 0.0,
+                    //     contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    //     leading: Icon(Icons.share_rounded),
+                    //     title: Text("Share App"),
+                    //   ),
+                    // ),
+                    // PopupMenuItem(
+                    //   padding: EdgeInsets.zero,
+                    //   onTap: () {},
+                    //   child: const ListTile(
+                    //     minVerticalPadding: 0.0,
+                    //     minTileHeight: 0.0,
+                    //     contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    //     leading: Icon(Icons.email_rounded),
+                    //     title: Text("Contact Developer"),
+                    //   ),
+                    // ),
+                    // PopupMenuItem(
+                    //   padding: EdgeInsets.zero,
+                    //   onTap: () {},
+                    //   child: const ListTile(
+                    //     minVerticalPadding: 0.0,
+                    //     minTileHeight: 0.0,
+                    //     contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    //     leading: Icon(Icons.privacy_tip_rounded),
+                    //     title: Text("Privacy Policy"),
+                    //   ),
+                    // ),
+                  ];
                 },
               ),
           ],
