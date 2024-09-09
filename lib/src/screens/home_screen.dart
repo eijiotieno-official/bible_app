@@ -5,10 +5,14 @@ import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
+import 'package:bible_app/src/screens/help_screen.dart';
 import 'package:bible_app/src/screens/search_screen.dart';
 import 'package:bible_app/src/services/bible_list_cache_service.dart';
+import 'package:bible_app/src/services/contact_us.dart';
 import 'package:bible_app/src/services/fetch_bible_version_data.dart';
 import 'package:bible_app/src/services/fetch_cached_data.dart';
+import 'package:bible_app/src/services/invite_friend.dart';
+import 'package:bible_app/src/services/privacy_policy.dart';
 import 'package:bible_app/src/services/show_versions.dart';
 import 'package:bible_app/src/widgets/bible_view.dart';
 import 'package:clipboard/clipboard.dart';
@@ -204,50 +208,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
-                      onTap: () {},
-                      child: const Text("Invite friends"),
+                      onTap: () {
+                        inviteFriend();
+                      },
+                      child: const Text("Invite a  friends"),
                     ),
                     PopupMenuItem(
-                      onTap: () {},
-                      child: const Text("Contact Developer"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const HelpScreen();
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text("Help center"),
                     ),
                     PopupMenuItem(
-                      onTap: () {},
-                      child: const Text("Privacy Policy"),
+                      onTap: () {
+                        contactUs();
+                      },
+                      child: const Text("Contact us"),
                     ),
-                    // PopupMenuItem(
-                    //   padding: EdgeInsets.zero,
-                    //   onTap: () {},
-                    //   child: const ListTile(
-                    //     minVerticalPadding: 0.0,
-                    //     minTileHeight: 0.0,
-                    //     contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    //     leading: Icon(Icons.share_rounded),
-                    //     title: Text("Share App"),
-                    //   ),
-                    // ),
-                    // PopupMenuItem(
-                    //   padding: EdgeInsets.zero,
-                    //   onTap: () {},
-                    //   child: const ListTile(
-                    //     minVerticalPadding: 0.0,
-                    //     minTileHeight: 0.0,
-                    //     contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    //     leading: Icon(Icons.email_rounded),
-                    //     title: Text("Contact Developer"),
-                    //   ),
-                    // ),
-                    // PopupMenuItem(
-                    //   padding: EdgeInsets.zero,
-                    //   onTap: () {},
-                    //   child: const ListTile(
-                    //     minVerticalPadding: 0.0,
-                    //     minTileHeight: 0.0,
-                    //     contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    //     leading: Icon(Icons.privacy_tip_rounded),
-                    //     title: Text("Privacy Policy"),
-                    //   ),
-                    // ),
+                    PopupMenuItem(
+                      onTap: () {
+                        privacyPolicy();
+                      },
+                      child: const Text("Privacy policy"),
+                    ),
                   ];
                 },
               ),

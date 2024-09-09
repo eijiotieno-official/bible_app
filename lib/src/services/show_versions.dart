@@ -1,10 +1,13 @@
 import 'package:bible_app/src/databases/bible_database.dart';
 import 'package:bible_app/src/models/bible_version_model.dart';
+import 'package:bible_app/src/providers/last_index_provider.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
+import 'package:bible_app/src/services/bible_list_cache_service.dart';
 import 'package:bible_app/src/services/bible_version_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'fetch_bible_version_data.dart';
 
@@ -12,6 +15,24 @@ Future<void> showVersions({
   required WidgetRef ref,
   required BuildContext context,
 }) async {
+  final positions = ref
+      .read(ScrollControllerProvider.itemPositionsListenerProvider)
+      .itemPositions
+      .value
+      .toList();
+
+  final first = positions
+      .where((ItemPosition position) => position.itemTrailingEdge > 0)
+      .reduce((ItemPosition min, ItemPosition position) =>
+          position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+      .index;
+
+  final firstIndex = first;
+
+  ref.read(lastIndexProvider.notifier).state = firstIndex;
+
+  LastIndexCacheService.save(firstIndex);
+
   final result = await showModalBottomSheet(
     useSafeArea: true,
     isScrollControlled: true,
@@ -24,8 +45,6 @@ Future<void> showVersions({
   );
 
   if (result != null) {
-    // ScrollControllerProvider.jumpTo(ref: ref, index: 0);
-
     final version = ref.watch(versionProvider);
 
     await fetchBibleVersionData(ref: ref, version: version);
