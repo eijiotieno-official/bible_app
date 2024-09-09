@@ -4,13 +4,20 @@ Future<void> contactUs() async {
   const emailAddress = "otienowatanabeeiji@gmail.com";
   const subject = "Inquiry Regarding Bible App";
 
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
   final Uri emailUri = Uri(
     scheme: 'mailto',
     path: emailAddress,
-    query: 'subject=$subject',
+    query: encodeQueryParameters(<String, String>{
+      'subject': subject,
+    }),
   );
 
-  if (await canLaunchUrl(emailUri)) {
-    await launchUrl(emailUri);
-  }
+  await launchUrl(emailUri);
 }
