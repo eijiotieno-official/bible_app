@@ -1,16 +1,16 @@
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> contactUs() async {
-  final emailAddress = "";
-  final subject = "";
+  const emailAddress = "otienowatanabeeiji@gmail.com";
+  const subject = "Inquiry Regarding Bible App";
 
-  final url =
-      "https://mail.google.com/mail/?view=cm&fs=1&to=$emailAddress&su=$subject";
+  final Uri emailUri = Uri(
+    scheme: 'mailto',
+    path: emailAddress,
+    query: 'subject=$subject',
+  );
 
-  final Uri uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
-  } else {
-    throw 'Could not launch $url';
+  if (await canLaunchUrl(emailUri)) {
+    await launchUrl(emailUri);
   }
 }

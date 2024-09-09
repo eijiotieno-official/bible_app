@@ -211,7 +211,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       onTap: () {
                         inviteFriend();
                       },
-                      child: const Text("Invite a  friends"),
+                      child: const Text("Invite a friend"),
                     ),
                     PopupMenuItem(
                       onTap: () {
