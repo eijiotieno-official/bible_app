@@ -23,7 +23,7 @@ class _AdBannerViewState extends State<AdBannerView> {
     _bannerAd = BannerAd(
       adUnitId: adUnitId,
       request: const AdRequest(),
-      size: AdSize.fullBanner,
+      size: AdSize.banner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
