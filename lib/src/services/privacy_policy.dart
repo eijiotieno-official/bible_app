@@ -8,7 +8,7 @@ Future<void> privacyPolicy() async {
   if (await canLaunchUrl(uri)) {
     await launchUrl(
       uri,
-      mode: LaunchMode.inAppWebView,
+      mode: LaunchMode.inAppBrowserView,
     );
   } else {
     throw 'Could not launch $url';

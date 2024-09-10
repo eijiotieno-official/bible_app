@@ -13,6 +13,7 @@ import 'package:bible_app/src/services/fetch_bible_version_data.dart';
 import 'package:bible_app/src/services/fetch_cached_data.dart';
 import 'package:bible_app/src/services/invite_friend.dart';
 import 'package:bible_app/src/services/privacy_policy.dart';
+import 'package:bible_app/src/services/show_verse_picker.dart';
 import 'package:bible_app/src/services/show_versions.dart';
 import 'package:bible_app/src/widgets/bible_view.dart';
 import 'package:clipboard/clipboard.dart';
@@ -156,11 +157,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         horizontal: 8.0,
                         vertical: 4.0,
                       ),
-                      child: Text(
-                        bibleVersion.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            bibleVersion.title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 4.0),
+                            child: Icon(Icons.arrow_drop_down_rounded),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -201,6 +211,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
             if (!isVerseSelected && versesLoaded)
+              IconButton(
+                onPressed: () {
+                  openShowVersions(context: context, verses: verses, ref: ref);
+                },
+                icon: const Icon(
+                  Icons.book_rounded,
+                ),
+              ),
+            if (!isVerseSelected && versesLoaded)
               PopupMenuButton(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
@@ -213,19 +232,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       },
                       child: const Text("Invite a friend"),
                     ),
-                    PopupMenuItem(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const HelpScreen();
-                            },
-                          ),
-                        );
-                      },
-                      child: const Text("Help center"),
-                    ),
+                    // PopupMenuItem(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) {
+                    //           return const HelpScreen();
+                    //         },
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: const Text("Help center"),
+                    // ),
                     PopupMenuItem(
                       onTap: () {
                         contactUs();

@@ -1,9 +1,41 @@
 import 'package:bible_app/src/databases/bible_database.dart';
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
+import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/widgets/picker_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+Future<void> openShowVersions({
+  required BuildContext context,
+  required List<Verse> verses,
+  required WidgetRef ref,
+}) async {
+  final selected = ref.watch(selectedVersesProvider);
+
+  final isVerseSelected = selected.isNotEmpty;
+
+  if (!isVerseSelected) {
+    final positions = ref
+        .read(ScrollControllerProvider.itemPositionsListenerProvider)
+        .itemPositions
+        .value
+        .toList();
+
+    final first = positions
+        .where((ItemPosition position) => position.itemTrailingEdge > 0)
+        .reduce((ItemPosition min, ItemPosition position) =>
+            position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+        .index;
+
+    final firstIndex = first + 1;
+
+    final activeVerse = verses[firstIndex];
+
+    await showVersePicker(context: context, verses: verses, verse: activeVerse);
+  }
+}
 
 Future<void> showVersePicker({
   required BuildContext context,
