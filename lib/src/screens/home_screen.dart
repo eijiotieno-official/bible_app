@@ -221,41 +221,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             if (!isVerseSelected && versesLoaded)
               PopupMenuButton(
+                menuPadding: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
+                      padding: EdgeInsets.zero,
                       onTap: () {
                         inviteFriend();
                       },
-                      child: const Text("Invite a friend"),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Icon(Icons.share_rounded),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 16.0),
+                            child: Text("Invite a friend"),
+                          ),
+                        ],
+                      ),
                     ),
-                    // PopupMenuItem(
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) {
-                    //           return const HelpScreen();
-                    //         },
-                    //       ),
-                    //     );
-                    //   },
-                    //   child: const Text("Help center"),
-                    // ),
                     PopupMenuItem(
+                      padding: EdgeInsets.zero,
                       onTap: () {
                         contactUs();
                       },
-                      child: const Text("Contact us"),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Icon(Icons.mail_rounded),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 16.0),
+                            child: Text("Contact us"),
+                          ),
+                        ],
+                      ),
                     ),
                     PopupMenuItem(
+                      padding: EdgeInsets.zero,
                       onTap: () {
                         privacyPolicy();
                       },
-                      child: const Text("Privacy policy"),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Icon(Icons.privacy_tip_rounded),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 16.0),
+                            child: Text("Privacy policy"),
+                          ),
+                        ],
+                      ),
                     ),
                   ];
                 },

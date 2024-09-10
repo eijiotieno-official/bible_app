@@ -19,25 +19,19 @@ class _AdBannerViewState extends State<AdBannerView> {
       ? 'ca-app-pub-3940256099942544/6300978111'
       : 'ca-app-pub-3940256099942544/2934735716';
 
-  /// Loads a banner ad.
-  void _loadAd() {
+  void _loadBannerAd() {
     _bannerAd = BannerAd(
       adUnitId: adUnitId,
       request: const AdRequest(),
-      size: AdSize.banner,
+      size: AdSize.fullBanner,
       listener: BannerAdListener(
-        // Called when an ad is successfully received.
         onAdLoaded: (ad) {
-          debugPrint('$ad loaded.');
           setState(() {
             _isLoaded = true;
           });
         },
-        // Called when an ad request failed.
         onAdFailedToLoad: (ad, err) {
-          debugPrint('BannerAd failed to load: $err');
-          // Dispose the ad here to free resources.
-          ad.dispose();
+          _loadBannerAd();
         },
       ),
     )..load();
@@ -45,13 +39,19 @@ class _AdBannerViewState extends State<AdBannerView> {
 
   @override
   void initState() {
-    _loadAd();
     super.initState();
+    _loadBannerAd();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd?.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _bannerAd == null
+    return _isLoaded == false
         ? const SizedBox.shrink()
         : SizedBox(
             width: _bannerAd!.size.width.toDouble(),
