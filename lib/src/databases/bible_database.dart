@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bible_app/src/models/bible_version_model.dart';
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class BibleDatabase {
@@ -88,6 +89,12 @@ class BibleDatabase {
     'Revelation'
   ];
 
+  Future<List<Verse>> parseVerses(String jsonString) async {
+    final List jsonList = json.decode(jsonString);
+
+    return jsonList.map((json) => Verse.fromMap(json)).toList();
+  }
+
   Future<Either<String, List<Verse>>> getVerses() async {
     try {
       List<Verse> verses = [];
@@ -95,12 +102,9 @@ class BibleDatabase {
       String jsonString = await rootBundle
           .loadString(version?.path ?? bibleVersions.first.path);
 
-      final jsonList = json.decode(jsonString);
+      final parsedVerses = await compute(parseVerses, jsonString);
 
-      for (var json in jsonList) {
-        final verse = Verse.fromMap(json);
-        verses.add(verse);
-      }
+      verses = parsedVerses;
 
       verses.sort((a, b) {
         final bookIndexA = bibleBooks.indexOf(a.book);
@@ -115,8 +119,6 @@ class BibleDatabase {
           }
         }
       });
-
-     
 
       return Right(verses);
     } catch (e) {

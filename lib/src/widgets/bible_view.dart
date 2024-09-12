@@ -20,7 +20,7 @@ class BibleView extends ConsumerStatefulWidget {
 class _BibleViewState extends ConsumerState<BibleView> {
   Future<void> _jumpToLastIndex() async {
     await Future.delayed(
-      const Duration(milliseconds: 100),
+      const Duration(milliseconds: 50),
       () async {
         final index = ref.read(lastIndexProvider);
 

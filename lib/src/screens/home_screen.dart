@@ -5,7 +5,6 @@ import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/screens/help_screen.dart';
 import 'package:bible_app/src/screens/search_screen.dart';
 import 'package:bible_app/src/services/bible_list_cache_service.dart';
 import 'package:bible_app/src/services/contact_us.dart';
