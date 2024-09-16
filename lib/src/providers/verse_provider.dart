@@ -1,7 +1,6 @@
 import 'package:bible_app/src/databases/bible_database.dart';
 import 'package:bible_app/src/models/bible_version_model.dart';
 import 'package:bible_app/src/models/verse_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class VerseNotifier extends StateNotifier<AsyncValue<List<Verse>>> {
