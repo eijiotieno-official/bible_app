@@ -98,7 +98,7 @@ class __VersePickerViewState extends ConsumerState<_VersePickerView> {
       child: Column(
         children: [
           PickerView(
-            books: BibleDatabase.bibleBooks,
+            books: BibleDatabase.books,
             chapters: chapters,
             verses: verses,
             selectedBook: _selectedBook,

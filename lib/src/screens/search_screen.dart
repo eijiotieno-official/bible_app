@@ -61,7 +61,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     resultBooks.sortByCompare(
       (keyOf) => keyOf,
       (a, b) {
-        final books = BibleDatabase.bibleBooks;
+        final books = BibleDatabase.books;
         int indexA = books.indexOf(a);
         int indexB = books.indexOf(b);
 

@@ -20,7 +20,7 @@ class BibleDatabase {
     BibleVersion(title: "Young's Literal Translation", path: "assets/ylt.json"),
   ];
 
-  static List<String> bibleBooks = [
+  static List<String> books = [
     'Genesis',
     'Exodus',
     'Leviticus',
@@ -89,7 +89,7 @@ class BibleDatabase {
     'Revelation'
   ];
 
-  Future<List<Verse>> parseVerses(String jsonString) async {
+  Future<List<Verse>> _parseVerses(String jsonString) async {
     final List jsonList = json.decode(jsonString);
 
     return jsonList.map((json) => Verse.fromMap(json)).toList();
@@ -102,13 +102,13 @@ class BibleDatabase {
       String jsonString = await rootBundle
           .loadString(version?.path ?? bibleVersions.first.path);
 
-      final parsedVerses = await compute(parseVerses, jsonString);
+      final parsedVerses = await compute(_parseVerses, jsonString);
 
       verses = parsedVerses;
 
       verses.sort((a, b) {
-        final bookIndexA = bibleBooks.indexOf(a.book);
-        final bookIndexB = bibleBooks.indexOf(b.book);
+        final bookIndexA = books.indexOf(a.book);
+        final bookIndexB = books.indexOf(b.book);
         if (bookIndexA != bookIndexB) {
           return bookIndexA.compareTo(bookIndexB);
         } else {
@@ -138,8 +138,8 @@ class BibleDatabase {
   //         books.sortByCompare(
   //           (keyOf) => keyOf,
   //           (a, b) {
-  //             final bookIndexA = bibleBooks.indexOf(a.title);
-  //             final bookIndexB = bibleBooks.indexOf(b.title);
+  //             final bookIndexA = books.indexOf(a.title);
+  //             final bookIndexB = books.indexOf(b.title);
   //             return bookIndexA.compareTo(bookIndexB);
   //           },
   //         );
@@ -172,7 +172,7 @@ class BibleDatabase {
   //         List<Book> books = [];
 
   //         // Iterate through each unique book title to organize chapters and verses
-  //         for (var bibleBook in bibleBooks) {
+  //         for (var bibleBook in books) {
   //           // Filter verses based on the current book title
   //           List<Verse> availableVerses =
   //               verses.where((v) => v.book == bibleBook).toList();
