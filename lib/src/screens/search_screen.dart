@@ -103,13 +103,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: _results.isEmpty
-                ? null
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text("Results: ${_results.length}"),
-                  ),
-            subtitle: SizedBox(
+            // title: _results.isEmpty
+            //     ? null
+            //     : Padding(
+            //         padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            //         child: Text("Results: ${_results.length}"),
+            //       ),
+            title: SizedBox(
               height: 45,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-Future<void> openShowVersions({
+Future<void> showPicker({
   required BuildContext context,
   required List<Verse> verses,
   required WidgetRef ref,

@@ -1,6 +1,6 @@
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:bible_app/src/providers/last_index_provider.dart';
-import 'package:bible_app/src/services/show_verse_picker.dart';
+import 'package:bible_app/src/services/show_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +20,7 @@ class Header extends ConsumerWidget {
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () {
-            openShowVersions(context: context, verses: verses, ref: ref);
+            showPicker(context: context, verses: verses, ref: ref);
           },
           child: Card(
             color: Theme.of(context).colorScheme.primaryContainer,

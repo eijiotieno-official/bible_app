@@ -7,8 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class BibleDatabase {
-  final BibleVersion? version;
-  BibleDatabase({this.version});
+  final BibleVersion version;
+  BibleDatabase(this.version);
 
   static List<BibleVersion> bibleVersions = [
     BibleVersion(title: "King James", path: "assets/kjv.json"),
@@ -100,7 +100,7 @@ class BibleDatabase {
       List<Verse> verses = [];
 
       String jsonString = await rootBundle
-          .loadString(version?.path ?? bibleVersions.first.path);
+          .loadString(version.path);
 
       final parsedVerses = await compute(_parseVerses, jsonString);
 
@@ -125,95 +125,4 @@ class BibleDatabase {
       return Left("Failed to get verses: $e");
     }
   }
-
-  // Future<Either<String, List<Chapter>>> getChapters() async {
-  //   try {
-  //     final getBooksResult = await getBooks();
-
-  //     return getBooksResult.fold(
-  //       (error) => Left(error),
-  //       (books) {
-  //         List<Chapter> chapters = [];
-
-  //         books.sortByCompare(
-  //           (keyOf) => keyOf,
-  //           (a, b) {
-  //             final bookIndexA = books.indexOf(a.title);
-  //             final bookIndexB = books.indexOf(b.title);
-  //             return bookIndexA.compareTo(bookIndexB);
-  //           },
-  //         );
-
-  //         for (var book in books) {
-  //           final thisChapters = book.chapters.sortedByCompare(
-  //             (keyOf) => keyOf.title,
-  //             (a, b) {
-  //               return a.compareTo(b);
-  //             },
-  //           );
-  //           chapters.addAll(thisChapters);
-  //         }
-
-  //         return Right(chapters);
-  //       },
-  //     );
-  //   } catch (e) {
-  //     return Left("Failed to get chapters: $e");
-  //   }
-  // }
-
-  // Future<Either<String, List<Book>>> getBooks() async {
-  //   try {
-  //     final getVersesResult = await getVerses();
-
-  //     return getVersesResult.fold(
-  //       (error) => Left(error),
-  //       (verses) {
-  //         List<Book> books = [];
-
-  //         // Iterate through each unique book title to organize chapters and verses
-  //         for (var bibleBook in books) {
-  //           // Filter verses based on the current book title
-  //           List<Verse> availableVerses =
-  //               verses.where((v) => v.book == bibleBook).toList();
-
-  //           // Extract unique chapter numbers from the filtered verses
-  // List<int> availableChapters =
-  //     availableVerses.map((e) => e.chapter).toSet().toList();
-
-  //           List<Chapter> chapters = [];
-
-  //           // Iterate through each unique chapter number to organize verses
-  //           for (var element in availableChapters) {
-  //             // Create a Chapter object for each unique chapter
-  //             Chapter chapter = Chapter(
-  //               book: bibleBook,
-  //               title: element,
-  //               verses:
-  //                   availableVerses.where((v) => v.chapter == element).toList(),
-  //             );
-
-  //             chapters.add(chapter);
-  //           }
-
-  //           chapters.sortByCompare(
-  //             (keyOf) => keyOf.title,
-  //             (a, b) {
-  //               return a.compareTo(b);
-  //             },
-  //           );
-
-  //           // Create a Book object for the current book title and its organized chapters
-  //           Book book = Book(title: bibleBook, chapters: chapters);
-
-  //           books.add(book);
-  //         }
-
-  //         return Right(books);
-  //       },
-  //     );
-  //   } catch (e) {
-  //     return Left("Failed to get books: $e");
-  //   }
-  // }
 }

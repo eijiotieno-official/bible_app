@@ -5,22 +5,20 @@ import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/selected_verses_provider.dart';
 import 'package:bible_app/src/providers/verse_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
+import 'package:bible_app/src/screens/bookmark_screen.dart';
 import 'package:bible_app/src/screens/search_screen.dart';
-import 'package:bible_app/src/services/bible_list_cache_service.dart';
-import 'package:bible_app/src/services/contact_us.dart';
+import 'package:bible_app/src/services/cache_services.dart';
 import 'package:bible_app/src/services/fetch_bible_version_data.dart';
 import 'package:bible_app/src/services/fetch_cached_data.dart';
-import 'package:bible_app/src/services/invite_friend.dart';
-import 'package:bible_app/src/services/privacy_policy.dart';
-import 'package:bible_app/src/services/show_verse_picker.dart';
+import 'package:bible_app/src/services/show_picker.dart';
 import 'package:bible_app/src/services/show_versions.dart';
+import 'package:bible_app/src/services/user_action_services.dart';
+import 'package:bible_app/src/services/verse_services.dart';
 import 'package:bible_app/src/widgets/bible_view.dart';
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -30,20 +28,12 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  Future<void> _initData() async {
+  Future<void> _init() async {
     await fetchCachedData(ref: ref);
 
     final BibleVersion version = ref.read(versionProvider);
 
-    await fetchBibleVersionData(ref: ref, version: version);
-  }
-
-  Verse? _activeVerse;
-
-  @override
-  void initState() {
-    super.initState();
-    _initData().then(
+    await fetchBibleVersionData(ref: ref, version: version).then(
       (_) {
         ref
             .read(ScrollControllerProvider.itemPositionsListenerProvider)
@@ -66,7 +56,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
             final firstIndex = first;
 
-            LastIndexCacheService.save(firstIndex);
+            CacheServices.saveVerseIndex(firstIndex);
 
             final versesState = ref.read(versesProvider);
 
@@ -87,39 +77,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Future<void> _copy(List<Verse> verses) async {
-    String cleaned = _cleanVerses(verses);
+  Verse? _activeVerse;
 
-    await FlutterClipboard.copy(cleaned).then(
-      (_) {
-        ref.read(selectedVersesProvider.notifier).clear();
-      },
-    );
-  }
-
-  Future<void> _share(List<Verse> verses) async {
-    String cleaned = _cleanVerses(verses);
-
-    await Share.share(cleaned).then(
-      (_) {
-        ref.read(selectedVersesProvider.notifier).clear();
-      },
-    );
-  }
-
-  String _cleanVerses(List<Verse> verses) {
-    String result = verses
-        .map((e) => " [${e.book} ${e.chapter}:${e.verse}] ${e.text.trim()}")
-        .join();
-
-    final currentVersion = ref.watch(versionProvider);
-
-    final cleaned = "$result [${currentVersion.title}]";
-    return cleaned;
+  @override
+  void initState() {
+    super.initState();
+    _init();
   }
 
   @override
   Widget build(BuildContext context) {
+    VerseServices verseServices = VerseServices(ref);
+
     final versesState = ref.watch(versesProvider);
 
     final verses = versesState.asData?.value ?? [];
@@ -178,7 +147,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             if (isVerseSelected && versesLoaded)
               IconButton(
                 onPressed: () {
-                  _copy(selected);
+                  verseServices.copy(selected);
                 },
                 icon: const Icon(
                   Icons.copy_rounded,
@@ -187,7 +156,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             if (isVerseSelected && versesLoaded)
               IconButton(
                 onPressed: () {
-                  _share(selected);
+                  verseServices.share(selected);
                 },
                 icon: const Icon(
                   Icons.share_rounded,
@@ -212,10 +181,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             if (!isVerseSelected && versesLoaded)
               IconButton(
                 onPressed: () {
-                  openShowVersions(context: context, verses: verses, ref: ref);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return BookmarkScreen();
+                      },
+                    ),
+                  );
                 },
                 icon: const Icon(
-                  Icons.book_rounded,
+                  Icons.bookmark_outline_rounded,
                 ),
               ),
             if (!isVerseSelected && versesLoaded)
@@ -230,7 +206,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     PopupMenuItem(
                       padding: EdgeInsets.zero,
                       onTap: () {
-                        inviteFriend();
+                        UserActionServices.inviteFriend();
                       },
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
@@ -249,7 +225,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     PopupMenuItem(
                       padding: EdgeInsets.zero,
                       onTap: () {
-                        contactUs();
+                        UserActionServices.contactUs();
                       },
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
@@ -268,7 +244,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     PopupMenuItem(
                       padding: EdgeInsets.zero,
                       onTap: () {
-                        privacyPolicy();
+                        UserActionServices.privacyPolicy();
                       },
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,

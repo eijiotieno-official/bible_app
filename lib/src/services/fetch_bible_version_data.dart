@@ -9,7 +9,5 @@ Future<void> fetchBibleVersionData({
 }) async {
   ref.read(versionProvider.notifier).state = version;
 
- 
-
   await ref.read(versesProvider.notifier).loadVerses(version);
 }

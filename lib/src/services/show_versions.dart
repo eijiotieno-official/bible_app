@@ -3,8 +3,7 @@ import 'package:bible_app/src/models/bible_version_model.dart';
 import 'package:bible_app/src/providers/last_index_provider.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
 import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/services/bible_list_cache_service.dart';
-import 'package:bible_app/src/services/bible_version_cache_service.dart';
+import 'package:bible_app/src/services/cache_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -31,7 +30,7 @@ Future<void> showVersions({
 
   ref.read(lastIndexProvider.notifier).state = firstIndex;
 
-  LastIndexCacheService.save(firstIndex);
+  CacheServices.saveVerseIndex(firstIndex);
 
   final result = await showModalBottomSheet(
     useSafeArea: true,
@@ -70,7 +69,7 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
   void _confirm() {
     final version = _currentVersion ?? BibleDatabase.bibleVersions.first;
 
-    BibleVersionCacheService.save(version);
+    CacheServices.saveVersion(version);
 
     ref.read(versionProvider.notifier).state = version;
 
@@ -81,26 +80,25 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: ListView.builder(
-              itemCount: BibleDatabase.bibleVersions.length,
-              itemBuilder: (context, index) {
-                final thisVersion = BibleDatabase.bibleVersions[index];
-                bool isSelected =
-                    _currentVersion.toString() == thisVersion.toString();
-                return CheckboxListTile(
-                  value: isSelected,
-                  onChanged: (b) {
-                    setState(() {
-                      _currentVersion = thisVersion;
-                    });
-                  },
-                  title: Text(thisVersion.title),
-                );
-              },
-            ),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: BibleDatabase.bibleVersions.length,
+            itemBuilder: (context, index) {
+              final thisVersion = BibleDatabase.bibleVersions[index];
+              bool isSelected =
+                  _currentVersion.toString() == thisVersion.toString();
+              return CheckboxListTile(
+                value: isSelected,
+                onChanged: (b) {
+                  setState(() {
+                    _currentVersion = thisVersion;
+                  });
+                },
+                title: Text(thisVersion.title),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
