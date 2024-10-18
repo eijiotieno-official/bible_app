@@ -10,7 +10,6 @@ import 'package:bible_app/src/screens/search_screen.dart';
 import 'package:bible_app/src/services/cache_services.dart';
 import 'package:bible_app/src/services/fetch_bible_version_data.dart';
 import 'package:bible_app/src/services/fetch_cached_data.dart';
-import 'package:bible_app/src/services/show_picker.dart';
 import 'package:bible_app/src/services/show_versions.dart';
 import 'package:bible_app/src/services/user_action_services.dart';
 import 'package:bible_app/src/services/verse_services.dart';
