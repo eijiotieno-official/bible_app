@@ -19,6 +19,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../widgets/ad_banner_view.dart';
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -264,19 +266,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
           ],
         ),
-        body: versesState.when(
-          data: (data) => BibleView(data),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(error.toString()),
+        body: Column(
+          children: [
+            const AdBannerView(),
+            Expanded(
+              child: versesState.when(
+                data: (data) => BibleView(data),
+                error: (error, stackTrace) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(error.toString()),
+                  ),
+                ),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(
+                    strokeCap: StrokeCap.round,
+                  ),
+                ),
+              ),
             ),
-          ),
-          loading: () => const Center(
-            child: CircularProgressIndicator(
-              strokeCap: StrokeCap.round,
-            ),
-          ),
+          ],
         ),
       ),
     );

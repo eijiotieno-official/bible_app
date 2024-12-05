@@ -1,7 +1,6 @@
 import 'package:bible_app/src/models/verse_model.dart';
 import 'package:bible_app/src/providers/last_index_provider.dart';
 import 'package:bible_app/src/providers/scroll_controller_provider.dart';
-import 'package:bible_app/src/widgets/ad_banner_view.dart';
 import 'package:bible_app/src/widgets/grouped_list.dart';
 import 'package:bible_app/src/widgets/header.dart';
 import 'package:flutter/material.dart';
@@ -38,28 +37,21 @@ class _BibleViewState extends ConsumerState<BibleView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const AdBannerView(),
-        Expanded(
-          child: GroupedList(
-            items: widget.verses,
-            itemScrollController:
-                ref.read(ScrollControllerProvider.itemScrollControllerProvider),
-            scrollOffsetController: ref
-                .read(ScrollControllerProvider.scrollOffsetControllerProvider),
-            itemPositionsListener: ref
-                .read(ScrollControllerProvider.itemPositionsListenerProvider),
-            scrollOffsetListener:
-                ref.read(ScrollControllerProvider.scrollOffsetListenerProvider),
-            itemBuilder: (context, index) {
-              final verse = widget.verses[index];
-              return VerseItem(verse: verse);
-            },
-            header: Header(widget.verses),
-          ),
-        ),
-      ],
+    return GroupedList(
+      items: widget.verses,
+      itemScrollController:
+          ref.read(ScrollControllerProvider.itemScrollControllerProvider),
+      scrollOffsetController: ref
+          .read(ScrollControllerProvider.scrollOffsetControllerProvider),
+      itemPositionsListener: ref
+          .read(ScrollControllerProvider.itemPositionsListenerProvider),
+      scrollOffsetListener:
+          ref.read(ScrollControllerProvider.scrollOffsetListenerProvider),
+      itemBuilder: (context, index) {
+        final verse = widget.verses[index];
+        return VerseItem(verse: verse);
+      },
+      header: Header(widget.verses),
     );
   }
 }

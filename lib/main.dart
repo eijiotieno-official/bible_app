@@ -17,17 +17,25 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        // Helper function to ensure the primary color is not null, white, or black
+        Color getPrimaryColor(Color? color) {
+          if (color == null || color == Colors.white || color == Colors.black) {
+            return Colors.orange;
+          }
+          return color;
+        }
+
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.system,
           darkTheme: ThemeData(
             useMaterial3: true,
-            colorSchemeSeed: darkDynamic?.primary,
+            colorSchemeSeed: getPrimaryColor(darkDynamic?.primary),
             brightness: Brightness.dark,
           ),
           theme: ThemeData(
             useMaterial3: true,
-            colorSchemeSeed: lightDynamic?.primary,
+            colorSchemeSeed: getPrimaryColor(lightDynamic?.primary),
             brightness: Brightness.light,
           ),
           home: const HomeScreen(),

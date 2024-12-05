@@ -138,12 +138,22 @@ class __VersePickerViewState extends ConsumerState<_VersePickerView> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: () {
+                // Find the index of the selected verse
                   final index = widget.verses.indexWhere((test) =>
                       test.book == _selectedVerse?.book &&
                       test.chapter == _selectedVerse?.chapter &&
                       test.verse == _selectedVerse?.verse);
-                  ScrollControllerProvider.jumpTo(ref: ref, index: index);
+
+// Ensure the index is within the inclusive range
+                  final validIndex =
+                      (index >= 0 && index < widget.verses.length) ? index : 0;
+
+// Scroll to the valid index
+                  ScrollControllerProvider.jumpTo(ref: ref, index: validIndex);
+
+// Close the current screen
                   Navigator.pop(context);
+
                 },
                 child: Text(
                     "Go to $_selectedBook $_selectedChapter:${_selectedVerse?.verse}"),
