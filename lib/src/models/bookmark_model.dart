@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:bible_app/src/models/verse_model.dart';
+import 'verse_model.dart';
 
 class Bookmark {
   final Verse verse;

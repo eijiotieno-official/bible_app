@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:bible_app/src/models/bible_version_model.dart';
-import 'package:bible_app/src/models/verse_model.dart';
+import '../models/bible_version_model.dart';
+import '../models/verse_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';

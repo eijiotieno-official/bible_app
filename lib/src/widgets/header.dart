@@ -1,6 +1,6 @@
-import 'package:bible_app/src/models/verse_model.dart';
-import 'package:bible_app/src/providers/last_index_provider.dart';
-import 'package:bible_app/src/services/show_picker.dart';
+import '../models/verse_model.dart';
+import '../providers/last_index_provider.dart';
+import '../services/show_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,23 +24,31 @@ class Header extends ConsumerWidget {
           },
           child: Card(
             color: Theme.of(context).colorScheme.primaryContainer,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24.0),
+            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
                 vertical: 4.0,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "${verse.book} ${verse.chapter}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      "${verse.book} ${verse.chapter}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(left: 4.0),
+                    padding: EdgeInsets.only(
+                      left: 4.0,
+                      right: 8.0,
+                    ),
                     child: Icon(Icons.arrow_drop_down_rounded),
                   ),
                 ],

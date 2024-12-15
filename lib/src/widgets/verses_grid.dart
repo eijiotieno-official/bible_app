@@ -1,4 +1,4 @@
-import 'package:bible_app/src/models/verse_model.dart';
+import '../models/verse_model.dart';
 import 'package:flutter/material.dart';
 
 class VersesGrid extends StatelessWidget {

@@ -1,9 +1,9 @@
-import 'package:bible_app/src/databases/bible_database.dart';
-import 'package:bible_app/src/models/bible_version_model.dart';
-import 'package:bible_app/src/providers/last_index_provider.dart';
-import 'package:bible_app/src/providers/scroll_controller_provider.dart';
-import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/services/cache_services.dart';
+import '../databases/bible_database.dart';
+import '../models/bible_version_model.dart';
+import '../providers/last_index_provider.dart';
+import '../providers/scroll_controller_provider.dart';
+import '../providers/version_provider.dart';
+import 'cache_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -73,6 +73,10 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
 
     ref.read(versionProvider.notifier).state = version;
 
+    final index = ref.read(lastIndexProvider);
+
+    ScrollControllerProvider.jumpTo(ref: ref, index: index);
+
     Navigator.pop(context, true);
   }
 
@@ -89,14 +93,18 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
               final thisVersion = BibleDatabase.bibleVersions[index];
               bool isSelected =
                   _currentVersion.toString() == thisVersion.toString();
-              return CheckboxListTile(
-                value: isSelected,
+              return RadioListTile(
+                value: thisVersion,
                 onChanged: (b) {
                   setState(() {
                     _currentVersion = thisVersion;
                   });
+
+
                 },
                 title: Text(thisVersion.title),
+                groupValue: _currentVersion,
+                selected: isSelected,
               );
             },
           ),

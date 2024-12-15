@@ -1,19 +1,18 @@
-import 'package:bible_app/src/models/bible_version_model.dart';
-import 'package:bible_app/src/models/verse_model.dart';
-import 'package:bible_app/src/providers/last_index_provider.dart';
-import 'package:bible_app/src/providers/scroll_controller_provider.dart';
-import 'package:bible_app/src/providers/selected_verses_provider.dart';
-import 'package:bible_app/src/providers/verse_provider.dart';
-import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/screens/bookmark_screen.dart';
-import 'package:bible_app/src/screens/search_screen.dart';
-import 'package:bible_app/src/services/cache_services.dart';
-import 'package:bible_app/src/services/fetch_bible_version_data.dart';
-import 'package:bible_app/src/services/fetch_cached_data.dart';
-import 'package:bible_app/src/services/show_versions.dart';
-import 'package:bible_app/src/services/user_action_services.dart';
-import 'package:bible_app/src/services/verse_services.dart';
-import 'package:bible_app/src/widgets/bible_view.dart';
+import '../models/bible_version_model.dart';
+import '../models/verse_model.dart';
+import '../providers/last_index_provider.dart';
+import '../providers/scroll_controller_provider.dart';
+import '../providers/selected_verses_provider.dart';
+import '../providers/verse_provider.dart';
+import '../providers/version_provider.dart';
+import 'search_screen.dart';
+import '../services/cache_services.dart';
+import '../services/fetch_bible_version_data.dart';
+import '../services/fetch_cached_data.dart';
+import '../services/show_versions.dart';
+import '../services/user_action_services.dart';
+import '../services/verse_services.dart';
+import '../widgets/bible_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -115,28 +114,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: versesLoaded == false
               ? null
               : Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24.0),
+                  ),
                   margin: EdgeInsets.zero,
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(16.0),
+                    borderRadius: BorderRadius.circular(24.0),
                     onTap: () async {
                       await showVersions(context: context, ref: ref);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0,
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            bibleVersion.title,
-                            style: const TextStyle(
-                              fontSize: 16,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child: Text(
+                              bibleVersion.title,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(left: 4.0),
+                            padding: EdgeInsets.only(
+                              left: 4.0,
+                              right: 8.0,
+                            ),
                             child: Icon(Icons.arrow_drop_down_rounded),
                           ),
                         ],
@@ -180,86 +185,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
             if (!isVerseSelected && versesLoaded)
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return BookmarkScreen();
-                      },
-                    ),
-                  );
-                },
-                icon: const Icon(
-                  Icons.bookmark_outline_rounded,
-                ),
-              ),
-            if (!isVerseSelected && versesLoaded)
               PopupMenuButton(
                 menuPadding: EdgeInsets.zero,
-                padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
-                      padding: EdgeInsets.zero,
                       onTap: () {
                         UserActionServices.inviteFriend();
                       },
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Icon(Icons.share_rounded),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 16.0),
-                            child: Text("Invite a friend"),
-                          ),
-                        ],
-                      ),
+                      child: Text("Invite a friend"),
                     ),
                     PopupMenuItem(
-                      padding: EdgeInsets.zero,
                       onTap: () {
                         UserActionServices.contactUs();
                       },
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Icon(Icons.mail_rounded),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 16.0),
-                            child: Text("Contact us"),
-                          ),
-                        ],
-                      ),
+                      child: Text("Contact us"),
                     ),
                     PopupMenuItem(
-                      padding: EdgeInsets.zero,
                       onTap: () {
                         UserActionServices.privacyPolicy();
                       },
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Icon(Icons.privacy_tip_rounded),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 16.0),
-                            child: Text("Privacy policy"),
-                          ),
-                        ],
-                      ),
+                      child: Text("Privacy policy"),
                     ),
                   ];
                 },

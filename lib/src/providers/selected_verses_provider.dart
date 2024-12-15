@@ -1,5 +1,6 @@
-import 'package:bible_app/src/models/verse_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../models/verse_model.dart';
 
 class SelectedVersesNotifier extends StateNotifier<List<Verse>> {
   SelectedVersesNotifier() : super([]);

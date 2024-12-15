@@ -2,9 +2,9 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:bible_app/src/models/verse_model.dart';
-import 'package:bible_app/src/providers/selected_verses_provider.dart';
-import 'package:bible_app/src/providers/version_provider.dart';
+import '../models/verse_model.dart';
+import '../providers/selected_verses_provider.dart';
+import '../providers/version_provider.dart';
 
 class VerseServices {
   final WidgetRef _ref;

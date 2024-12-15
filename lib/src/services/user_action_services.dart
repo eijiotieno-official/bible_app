@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 class UserActionServices {
   static Future<void> contactUs() async {
     const emailAddress = "otienowatanabeeiji@gmail.com";
-    const subject = "Inquiry Regarding Bible App";
+    const subject = "Inquiry Regarding The Word";
 
     String? encodeQueryParameters(Map<String, String> params) {
       return params.entries
@@ -28,7 +28,7 @@ class UserActionServices {
     const String appLink = 'https://example.com/download';
     const String message = '''
                       Hey! 🙌
-                      I’ve been using this amazing Bible app and thought you might love it too! It’s a great way to dive deeper into God’s word and stay connected. 📖✨
+                      I’ve been using this amazing The Word and thought you might love it too! It’s a great way to dive deeper into God’s word and stay connected. 📖✨
                       You can download it here: $appLink
                       Blessings!
                         ''';
@@ -38,7 +38,7 @@ class UserActionServices {
 
   static Future<void> privacyPolicy() async {
     const url =
-        "https://github.com/eijiotieno-official/bible-app-privacy-policy/blob/main/privacy_policy";
+        "https://docs.google.com/document/d/e/2PACX-1vTQf43End-1qpuWrkHCDZzWEB4Y8IAcy0bJs-fP7WAymUqDsxGH4gvkd9Yfsgf8hoiHuwUxDulx8Hyn/pub";
 
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {

@@ -1,8 +1,8 @@
-import 'package:bible_app/src/databases/bible_database.dart';
-import 'package:bible_app/src/models/verse_model.dart';
-import 'package:bible_app/src/providers/scroll_controller_provider.dart';
-import 'package:bible_app/src/providers/selected_verses_provider.dart';
-import 'package:bible_app/src/widgets/picker_view.dart';
+import '../databases/bible_database.dart';
+import '../models/verse_model.dart';
+import '../providers/scroll_controller_provider.dart';
+import '../providers/selected_verses_provider.dart';
+import '../widgets/picker_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -137,24 +137,24 @@ class __VersePickerViewState extends ConsumerState<_VersePickerView> {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () {
-                // Find the index of the selected verse
-                  final index = widget.verses.indexWhere((test) =>
-                      test.book == _selectedVerse?.book &&
-                      test.chapter == _selectedVerse?.chapter &&
-                      test.verse == _selectedVerse?.verse);
+                onPressed: widget.verse.toString() == _selectedVerse?.toString()
+                    ? null
+                    : () {
+                        final index = widget.verses.indexWhere((test) =>
+                            test.book == _selectedVerse?.book &&
+                            test.chapter == _selectedVerse?.chapter &&
+                            test.verse == _selectedVerse?.verse);
 
-// Ensure the index is within the inclusive range
-                  final validIndex =
-                      (index >= 0 && index < widget.verses.length) ? index : 0;
+                        final validIndex =
+                            (index >= 0 && index < widget.verses.length)
+                                ? index
+                                : 0;
 
-// Scroll to the valid index
-                  ScrollControllerProvider.jumpTo(ref: ref, index: validIndex);
+                        ScrollControllerProvider.jumpTo(
+                            ref: ref, index: validIndex);
 
-// Close the current screen
-                  Navigator.pop(context);
-
-                },
+                        Navigator.pop(context);
+                      },
                 child: Text(
                     "Go to $_selectedBook $_selectedChapter:${_selectedVerse?.verse}"),
               ),

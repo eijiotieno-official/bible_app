@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:bible_app/src/models/bible_version_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/bible_version_model.dart';
 
 String _index = 'index';
 

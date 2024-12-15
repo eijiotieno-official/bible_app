@@ -1,9 +1,9 @@
-import 'package:bible_app/src/databases/bible_database.dart';
-import 'package:bible_app/src/models/bible_version_model.dart';
-import 'package:bible_app/src/providers/last_index_provider.dart';
+import '../databases/bible_database.dart';
+import '../models/bible_version_model.dart';
+import '../providers/last_index_provider.dart';
 
-import 'package:bible_app/src/providers/version_provider.dart';
-import 'package:bible_app/src/services/cache_services.dart';
+import '../providers/version_provider.dart';
+import 'cache_services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> fetchCachedData({required WidgetRef ref}) async {

@@ -1,5 +1,6 @@
-import 'package:bible_app/src/models/verse_model.dart';
 import 'package:flutter/material.dart';
+
+import '../models/verse_model.dart';
 
 
 class TextUtils {
