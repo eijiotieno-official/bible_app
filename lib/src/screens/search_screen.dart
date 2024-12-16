@@ -1,10 +1,11 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../databases/bible_database.dart';
 import '../models/verse_model.dart';
 import '../providers/scroll_controller_provider.dart';
 import '../utils/text_utils.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:collection/collection.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   final List<Verse> verses;

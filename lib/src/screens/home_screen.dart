@@ -1,3 +1,9 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
 import '../models/bible_version_model.dart';
 import '../models/verse_model.dart';
 import '../providers/last_index_provider.dart';
@@ -5,20 +11,15 @@ import '../providers/scroll_controller_provider.dart';
 import '../providers/selected_verses_provider.dart';
 import '../providers/verse_provider.dart';
 import '../providers/version_provider.dart';
-import 'search_screen.dart';
 import '../services/cache_services.dart';
 import '../services/fetch_bible_version_data.dart';
 import '../services/fetch_cached_data.dart';
+import '../services/notification_service.dart';
 import '../services/show_versions.dart';
 import '../services/user_action_services.dart';
 import '../services/verse_services.dart';
 import '../widgets/bible_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
-import '../widgets/ad_banner_view.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -75,6 +76,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         );
       },
     );
+
+    NotificationService.scheduleDailyNotifications(version);
   }
 
   Verse? _activeVerse;
@@ -217,7 +220,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         body: Column(
           children: [
-            const AdBannerView(),
+            // const AdBannerView(),
             Expanded(
               child: versesState.when(
                 data: (data) => BibleView(data),

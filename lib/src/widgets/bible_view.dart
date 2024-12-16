@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/verse_model.dart';
 import '../providers/last_index_provider.dart';
 import '../providers/scroll_controller_provider.dart';
 import 'grouped_list.dart';
 import 'header.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'verse_item.dart';
 
 class BibleView extends ConsumerStatefulWidget {

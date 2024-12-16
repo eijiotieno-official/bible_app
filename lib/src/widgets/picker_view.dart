@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/verse_model.dart';
 import 'chapters_grid.dart';
 import 'verses_grid.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PickerView extends ConsumerWidget {
   final List<String> books;

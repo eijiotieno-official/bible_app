@@ -1,13 +1,14 @@
+import 'notification_service.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
 import '../databases/bible_database.dart';
 import '../models/bible_version_model.dart';
 import '../providers/last_index_provider.dart';
 import '../providers/scroll_controller_provider.dart';
 import '../providers/version_provider.dart';
 import 'cache_services.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
 import 'fetch_bible_version_data.dart';
 
 Future<void> showVersions({
@@ -66,10 +67,12 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
     super.initState();
   }
 
-  void _confirm() {
+  Future<void> _confirm() async {
     final version = _currentVersion ?? BibleDatabase.bibleVersions.first;
 
     CacheServices.saveVersion(version);
+
+    await NotificationService.scheduleDailyNotifications(version);
 
     ref.read(versionProvider.notifier).state = version;
 
@@ -77,7 +80,9 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
 
     ScrollControllerProvider.jumpTo(ref: ref, index: index);
 
-    Navigator.pop(context, true);
+    if (mounted) {
+      Navigator.pop(context, true);
+    }
   }
 
   @override
@@ -99,8 +104,6 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
                   setState(() {
                     _currentVersion = thisVersion;
                   });
-
-
                 },
                 title: Text(thisVersion.title),
                 groupValue: _currentVersion,
@@ -115,8 +118,8 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
               child: FilledButton(
                 onPressed: ref.read(versionProvider).toString() !=
                         _currentVersion.toString()
-                    ? () {
-                        _confirm();
+                    ? () async {
+                        await _confirm();
                       }
                     : null,
                 child: const Text("Confirm"),

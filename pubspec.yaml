@@ -1,12 +1,13 @@
 name: bible_app
 description: ""
 publish_to: "none"
-version: 0.1.0+3
+version: 0.1.0+4
 
 environment:
   sdk: ^3.5.0
 
 dependencies:
+  awesome_notifications: ^0.10.0
   clipboard: ^0.1.3
   collection: ^1.18.0
   dartz: ^0.10.1

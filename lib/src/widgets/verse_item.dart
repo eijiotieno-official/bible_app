@@ -1,9 +1,10 @@
-import '../models/verse_model.dart';
-import '../providers/selected_verses_provider.dart';
-import '../utils/font_size_util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../models/verse_model.dart';
+import '../providers/selected_verses_provider.dart';
+import '../utils/font_size_util.dart';
 
 class VerseItem extends ConsumerWidget {
   final Verse verse;

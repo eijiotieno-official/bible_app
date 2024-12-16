@@ -1,10 +1,11 @@
 import 'dart:convert';
 
-import '../models/bible_version_model.dart';
-import '../models/verse_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
+import '../models/bible_version_model.dart';
+import '../models/verse_model.dart';
 
 class BibleDatabase {
   final BibleVersion version;
@@ -89,6 +90,17 @@ class BibleDatabase {
     'Revelation'
   ];
 
+  List<String> inspirationBooks = [
+    "Proverbs",
+    "Psalm",
+    "Ecclesiastes",
+    "Matthew",
+    "Luke",
+    "Philippians",
+    "Romans",
+    "James",
+  ];
+
   Future<List<Verse>> _parseVerses(String jsonString) async {
     final List jsonList = json.decode(jsonString);
 
@@ -99,8 +111,7 @@ class BibleDatabase {
     try {
       List<Verse> verses = [];
 
-      String jsonString = await rootBundle
-          .loadString(version.path);
+      String jsonString = await rootBundle.loadString(version.path);
 
       final parsedVerses = await compute(_parseVerses, jsonString);
 
@@ -123,6 +134,32 @@ class BibleDatabase {
       return Right(verses);
     } catch (e) {
       return Left("Failed to get verses: $e");
+    }
+  }
+
+  Future<List<Verse>> getInspirationVerses() async {
+    try {
+      List<Verse> results = [];
+
+      final allVerses = await getVerses();
+
+      allVerses.fold(
+        (error) {
+          return Left(error);
+        },
+        (success) {
+          final verses = success
+              .where((verse) => inspirationBooks.contains(verse.book))
+              .toList();
+
+          results = verses;
+        },
+      );
+
+      return results;
+    } catch (e) {
+      debugPrint("Failed to get inspiration verses: $e");
+      return [];
     }
   }
 }

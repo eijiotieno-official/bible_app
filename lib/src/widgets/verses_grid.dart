@@ -1,5 +1,6 @@
-import '../models/verse_model.dart';
 import 'package:flutter/material.dart';
+
+import '../models/verse_model.dart';
 
 class VersesGrid extends StatelessWidget {
   final List<Verse> verses;

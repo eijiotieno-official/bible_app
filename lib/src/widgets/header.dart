@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/verse_model.dart';
 import '../providers/last_index_provider.dart';
 import '../services/show_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Header extends ConsumerWidget {
   final List<Verse> verses;

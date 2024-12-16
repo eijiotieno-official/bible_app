@@ -1,11 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
 import '../databases/bible_database.dart';
 import '../models/verse_model.dart';
 import '../providers/scroll_controller_provider.dart';
 import '../providers/selected_verses_provider.dart';
 import '../widgets/picker_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 Future<void> showPicker({
   required BuildContext context,

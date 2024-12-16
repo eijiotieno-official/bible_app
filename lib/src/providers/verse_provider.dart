@@ -1,7 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../databases/bible_database.dart';
 import '../models/bible_version_model.dart';
 import '../models/verse_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class VerseNotifier extends StateNotifier<AsyncValue<List<Verse>>> {
   VerseNotifier() : super(const AsyncValue.loading());
