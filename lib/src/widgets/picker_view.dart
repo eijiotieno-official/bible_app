@@ -54,7 +54,18 @@ class PickerView extends ConsumerWidget {
                     .map(
                       (e) => DropdownMenuItem<String>(
                         value: e,
-                        child: Text(e),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(e),
+                            ),
+                            if (e == "Malachi") Divider(),
+                          ],
+                        ),
                       ),
                     )
                     .toList(),
@@ -93,6 +104,33 @@ class PickerView extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBooks({
+    required List<String> books,
+    required Function(String book) onBookTapped,
+  }) {
+    return Flexible(
+      child: GridView.builder(
+        itemCount: books.length,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 4.0,
+          crossAxisSpacing: 4.0,
+        ),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              onBookTapped(books[index]);
+            },
+            child: Text(
+              books[index],
+            ),
+          );
+        },
       ),
     );
   }
