@@ -94,7 +94,10 @@ class BibleDatabase {
     "Proverbs",
     "Psalm",
     "Ecclesiastes",
+    "John",
+    "Isaiah",
     "Matthew",
+    "Mark",
     "Luke",
     "Philippians",
     "Romans",
@@ -113,7 +116,7 @@ class BibleDatabase {
 
       String jsonString = await rootBundle.loadString(version.path);
 
-      final parsedVerses = await compute(_parseVerses, jsonString);
+      final List<Verse> parsedVerses = await compute(_parseVerses, jsonString);
 
       verses = parsedVerses;
 

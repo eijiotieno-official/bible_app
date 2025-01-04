@@ -25,12 +25,9 @@ class UserActionServices {
   }
 
   static Future<void> inviteFriend() async {
-    const String appLink = 'https://example.com/download';
+    const String appLink = 'https://play.google.com/store/apps/details?id=com.the_word.eijiotieno&pcampaignid=web_share';
     const String message = '''
-                      Hey! 🙌
-                      I’ve been using this amazing The Word and thought you might love it too! It’s a great way to dive deeper into God’s word and stay connected. 📖✨
-                      You can download it here: $appLink
-                      Blessings!
+                      I’ve been using this amazing app and thought you might love it too. It’s a great way to dive deeper into God’s word and stay connected.You can download it here: $appLink
                         ''';
 
     await Share.share(message);

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -15,9 +14,7 @@ class _AdBannerViewState extends State<AdBannerView> {
   bool _isLoaded = false;
 
   // TODO: replace this test ad unit with your own ad unit.
-  final adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/6300978111'
-      : 'ca-app-pub-3940256099942544/2934735716';
+  final adUnitId = 'ca-app-pub-6707917211863578/3617648203';
 
   void _loadBannerAd() {
     _bannerAd = BannerAd(

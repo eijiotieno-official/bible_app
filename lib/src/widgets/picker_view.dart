@@ -1,3 +1,4 @@
+import 'package:bible_app/src/widgets/book_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -38,58 +39,55 @@ class PickerView extends ConsumerWidget {
           physics: const BouncingScrollPhysics(),
           children: [
             ListTile(
-              contentPadding: EdgeInsets.zero,
+              onTap: () async {
+                final result = await BookPicker.pick(
+                  context: context,
+                  initialBook: selectedBook ?? books.first,
+                  books: books,
+                );
+
+                if (result != null) {
+                  onBookTapped(result);
+                }
+              },
+              tileColor: Theme.of(context).hoverColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
               title: Text(
                 "Books",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              subtitle: DropdownButton<String>(
-                isExpanded: true,
-                underline: const SizedBox.shrink(),
-                borderRadius: BorderRadius.circular(16.0),
-                value: selectedBook,
-                items: books
-                    .map(
-                      (e) => DropdownMenuItem<String>(
-                        value: e,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(e),
-                            ),
-                            if (e == "Malachi") Divider(),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (String? value) {
-                  onBookTapped(value);
-                },
-              ),
+              subtitle: Text(selectedBook ?? books.first),
+              trailing: Icon(Icons.arrow_drop_down_rounded),
             ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                "Chapters",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ListTile(
+                tileColor: Theme.of(context).hoverColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                title: Text(
+                  "Chapters",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                subtitle: ChaptersGrid(
+                  chapters: chapters,
+                  selectedChapter: selectedChapter,
+                  onChapterTapped: onChapterTapped,
                 ),
               ),
-              subtitle: ChaptersGrid(
-                chapters: chapters,
-                selectedChapter: selectedChapter,
-                onChapterTapped: onChapterTapped,
-              ),
             ),
             ListTile(
-              contentPadding: EdgeInsets.zero,
+              tileColor: Theme.of(context).hoverColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
               title: Text(
                 "Verses",
                 style: TextStyle(
@@ -104,33 +102,6 @@ class PickerView extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBooks({
-    required List<String> books,
-    required Function(String book) onBookTapped,
-  }) {
-    return Flexible(
-      child: GridView.builder(
-        itemCount: books.length,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 4.0,
-          crossAxisSpacing: 4.0,
-        ),
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              onBookTapped(books[index]);
-            },
-            child: Text(
-              books[index],
-            ),
-          );
-        },
       ),
     );
   }

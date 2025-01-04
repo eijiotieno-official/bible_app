@@ -16,7 +16,10 @@ class VersesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
+      padding: const EdgeInsets.only(
+        top: 8.0,
+        bottom: 8.0,
+      ),
       child: Wrap(
         spacing: 8.0,
         runSpacing: 8.0,
@@ -32,6 +35,7 @@ class VersesGrid extends StatelessWidget {
                 width: 40,
                 height: 40,
                 child: Card(
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0)),
                   margin: EdgeInsets.zero,
@@ -39,7 +43,7 @@ class VersesGrid extends StatelessWidget {
                           verse.chapter == selectedVerse?.chapter &&
                           verse.verse == selectedVerse?.verse
                       ? Theme.of(context).colorScheme.primaryContainer
-                      : null,
+                      : Theme.of(context).hoverColor,
                   child: Center(child: Text(verse.verse.toString())),
                 ),
               ),

@@ -1,4 +1,3 @@
-import 'notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -10,6 +9,7 @@ import '../providers/scroll_controller_provider.dart';
 import '../providers/version_provider.dart';
 import 'cache_services.dart';
 import 'fetch_bible_version_data.dart';
+import 'notification_service.dart';
 
 Future<void> showVersions({
   required WidgetRef ref,

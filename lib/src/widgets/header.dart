@@ -20,8 +20,8 @@ class Header extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
-          onTap: () {
-            showPicker(context: context, verses: verses, ref: ref);
+          onTap: () async {
+            await showPicker(context: context, verses: verses, ref: ref);
           },
           child: Card(
             color: Theme.of(context).colorScheme.primaryContainer,
