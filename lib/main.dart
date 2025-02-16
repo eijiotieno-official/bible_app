@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'src/screens/home_screen.dart';
 import 'src/services/notification_service.dart';
@@ -8,7 +8,7 @@ import 'src/services/notification_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize Mobile Ads SDK
-  await MobileAds.instance.initialize();
+  // await MobileAds.instance.initialize();
   // Request notification permissions and initialize notification service
   await NotificationService.requestPermissions();
   // Run the app with Riverpod ProviderScope

@@ -221,7 +221,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         body: Column(
           children: [
-            const AdBannerView(),
+            // const AdBannerView(),
             Expanded(
               child: versesState.when(
                 data: (data) => BibleView(data),
