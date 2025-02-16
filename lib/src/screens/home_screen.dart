@@ -18,7 +18,7 @@ import '../services/notification_service.dart';
 import '../services/show_versions.dart';
 import '../services/user_action_services.dart';
 import '../services/verse_services.dart';
-import '../widgets/ad_banner_view.dart';
+// import '../widgets/ad_banner_view.dart';
 import '../widgets/bible_view.dart';
 import 'search_screen.dart';
 
