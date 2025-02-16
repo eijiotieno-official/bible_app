@@ -1,2 +1,0 @@
-/home/eiji_otieno/Desktop/bible_app/android/app/.cxx/Debug/o9y714e5/armeabi-v7a/CMakeFiles/edit_cache.dir
-/home/eiji_otieno/Desktop/bible_app/android/app/.cxx/Debug/o9y714e5/armeabi-v7a/CMakeFiles/rebuild_cache.dir
