@@ -76,6 +76,8 @@ class __VersionsViewState extends ConsumerState<_VersionsView> {
 
     ref.read(versionProvider.notifier).state = version;
 
+    ref.read(versionChangedProvider.notifier).state = true;
+
     final index = ref.read(lastIndexProvider);
 
     ScrollControllerProvider.jumpTo(ref: ref, index: index);
