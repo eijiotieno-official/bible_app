@@ -70,7 +70,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
             if (firstVerseInViewPort.book != previousActiveVerse.book ||
                 firstVerseInViewPort.chapter != previousActiveVerse.chapter) {
-              ref.read(lastIndexProvider.notifier).state = firstIndex;
+              if (!ref.read(versionChangedProvider)) {
+                ref.read(lastIndexProvider.notifier).state = firstIndex;
+                } else {
+                  ref.read(versionChangedProvider.notifier).state = false;
+                }
               _activeVerse = firstVerseInViewPort;
             }
           },
